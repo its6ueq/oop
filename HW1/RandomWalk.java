@@ -151,4 +151,3 @@ public class RandomWalk {
         StdDraw.pause (1);
     }
 }
-
