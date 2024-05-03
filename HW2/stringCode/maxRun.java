@@ -1,14 +1,17 @@
+package HW2.stringCode;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-public class stringCode {
+public class maxRun {
     public static void main (String[] args) {
         Scanner scanner = new Scanner (System.in);
         StringBuilder s1 = new StringBuilder (scanner.nextLine ());
-        System.out.println (maxRun (s1));
+        System.out.println (MaxRun (s1));
     }
 
-    public static int maxRun (StringBuilder s) {
-
+    public static int MaxRun (StringBuilder s) {
         int res = 0;
         Map<Character, Boolean> map = new HashMap<Character, Boolean> ();
         int i;

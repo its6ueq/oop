@@ -1,3 +1,5 @@
+package HW1.HackerRank;
+
 import java.io.*;
 import java.math.*;
 import java.security.*;
@@ -7,7 +9,7 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 
 
-public class Solution {
+public class javaLoopsI {
     public static void main(String[] args) throws IOException {
         BufferedReader bufferedReader = new BufferedReader (new InputStreamReader (System.in));
         int N = Integer.parseInt (bufferedReader.readLine ().trim ());

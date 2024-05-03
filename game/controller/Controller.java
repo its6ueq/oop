@@ -2,26 +2,22 @@ package game.controller;
 
 import game.gui.MainFrame;
 import game.gui.MainPanel;
-import game.gui.GamePanel;
+import game.gui.Stage2Panel;
+
 public class Controller {
-    private MainFrame mainFrame;
-    private MainPanel mainPanel;
-    private GamePanel gamePanel;
+    private final MainFrame mainFrame;
+
+
     public Controller () {
         mainFrame = new MainFrame ();
         startMenu ();
     }
 
-    public void startMenu(){
-        mainPanel = new MainPanel ();
+    public void startMenu () {
+        MainPanel mainPanel = new MainPanel ();
         mainFrame.setContentPane (mainPanel);
         mainFrame.setVisible (true);
     }
 
-    public void gamePlay(){
-        gamePanel = new GamePanel ();
-        mainFrame.setContentPane (gamePanel);
-        mainFrame.setVisible (true);
-    }
 
 }

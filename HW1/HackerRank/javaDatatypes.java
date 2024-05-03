@@ -1,9 +1,10 @@
+package HW1.HackerRank;
+
 import java.util.*;
-import java.io.*;
 
 
-class Solution {
-    public static void main(String[] argh) {
+class javaDatatypes {
+    public static void main (String[] argh) {
 
         Scanner sc = new Scanner (System.in);
         int t = sc.nextInt ();
@@ -13,9 +14,12 @@ class Solution {
             try {
                 long x = sc.nextLong ();
                 System.out.println (x + " can be fitted in:");
-                if (x == (byte) x) System.out.println ("* byte");
-                if (x == (short) x) System.out.println ("* short");
-                if (x == (int) x) System.out.println ("* int");
+                if (x == (byte) x)
+                    System.out.println ("* byte");
+                if (x == (short) x)
+                    System.out.println ("* short");
+                if (x == (int) x)
+                    System.out.println ("* int");
                 System.out.println ("* long");
                 //Complete the code
             } catch (InputMismatchException exception) {

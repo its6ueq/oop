@@ -1,3 +1,5 @@
+package HW1.HackerRank;
+
 import java.io.*;
 import java.math.*;
 import java.security.*;
@@ -6,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-public class Solution {
+public class javaIfElse {
     private static final Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
         int N = scanner.nextInt();

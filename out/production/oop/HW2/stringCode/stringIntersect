@@ -1,0 +1,28 @@
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class stringIntersect {
+    public static void main (String[] args) {
+        Scanner scanner = new Scanner (System.in);
+        StringBuilder s2 = new StringBuilder (scanner.nextLine ());
+        StringBuilder s3 = new StringBuilder (scanner.nextLine ());
+        int len = scanner.nextInt ();
+        System.out.println (stringIntersect (s2, s3, len));
+    }
+
+    public static boolean stringIntersect (StringBuilder s, StringBuilder s1, int len) {
+        HashSet<String> hs = new HashSet<String> ();
+        for (int i = 0; i <= s.length () - len; i++) {
+            StringBuilder temp = new StringBuilder ();
+            temp.append (s, i, i + len);
+            hs.add (temp.toString ());
+        }
+        for (int i = 0; i <= s1.length () - len; i++) {
+            StringBuilder temp = new StringBuilder ();
+            temp.append (s1, i, i + len);
+            if (hs.contains (temp.toString ()))
+                return true;
+        }
+        return false;
+    }
+}
