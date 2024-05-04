@@ -14,14 +14,10 @@ public class Stage1Panel extends JPanel implements ActionListener, KeyListener {
 
     Image p1IMage;
 
-    Tank p1 = Tank.getInstance (0, 0, 0, 0, 10, p1IMage);
-
 
     Stage1Panel () {
         setFocusable (true);
         addKeyListener (this);
-
-        p1IMage = new ImageIcon(Objects.requireNonNull(getClass().getResource("0.gif"))).getImage();
 
     }
 
@@ -56,8 +52,7 @@ public class Stage1Panel extends JPanel implements ActionListener, KeyListener {
 
         g.setFont (new Font ("Arial", Font.PLAIN, 32));
         g.drawString ("Game Over: ", 10, 35);
-
-
+        
     }
 }
 

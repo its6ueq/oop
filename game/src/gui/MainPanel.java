@@ -19,12 +19,9 @@ public class MainPanel extends JPanel {
         groupLayout.setAutoCreateContainerGaps (true);
 
 
-        var name = new JLabel ("TEN GAME");
+        var name = new JLabel ("TANK BATTLE");
         name.setFont (new Font (name.getFont ().getName (), name.getFont ().getStyle (), 40));
 
-        var nameField = new JTextField ("Enter your name");
-        nameField.setMinimumSize (new Dimension (150, 30));
-        nameField.setMaximumSize (new Dimension (150, 30));
 
         var newGame = new JButton ("New Game");
 
@@ -34,9 +31,10 @@ public class MainPanel extends JPanel {
         newGame.addActionListener (new ActionListener () {
             @Override
             public void actionPerformed (ActionEvent e) {
-                Stage1Panel stage1Panel = new Stage1Panel ();
+                GamePanel gamepanel = new GamePanel ();
                 JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor (MainPanel.this);
-                mainFrame.setContentPane (stage1Panel);
+                mainFrame.setContentPane (gamepanel);
+                gamepanel.requestFocus ();
                 mainFrame.setVisible (true);
             }
         });
@@ -49,13 +47,11 @@ public class MainPanel extends JPanel {
         exit.setMinimumSize (new Dimension (150, 30));
         exit.setMaximumSize (new Dimension (150, 30));
 
-        //        setBackground (Color.BLACK);
-        //        newGame.setBackground (Color.BLACK);
-        //        scoreBoard.setBackground (Color.BLACK);
-        //        exit.setBackground (Color.BLACK);
+                setBackground (Color.BLACK);
 
-        groupLayout.setHorizontalGroup (groupLayout.createParallelGroup (GroupLayout.Alignment.CENTER).addGap (100).addComponent (name).addGap (30).addComponent (nameField).addComponent (newGame).addComponent (scoreBoard).addComponent (exit));
-        groupLayout.setVerticalGroup (groupLayout.createSequentialGroup ().addGap (100).addComponent (name).addGap (30).addComponent (nameField).addComponent (newGame).addComponent (scoreBoard).addComponent (exit));
+
+        groupLayout.setHorizontalGroup (groupLayout.createParallelGroup (GroupLayout.Alignment.CENTER).addGap (100).addComponent (name).addGap (30).addComponent (newGame).addComponent (scoreBoard).addComponent (exit));
+        groupLayout.setVerticalGroup (groupLayout.createSequentialGroup ().addGap (100).addComponent (name).addGap (30).addComponent (newGame).addComponent (scoreBoard).addComponent (exit));
         add (contentPanel);
     }
 }

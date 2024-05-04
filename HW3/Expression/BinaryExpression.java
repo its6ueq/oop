@@ -7,10 +7,6 @@ abstract class BinaryExpression implements Expression {
         this.right = right;
     }
 
-    abstract String operator ();
-
-    abstract int evaluate (int leftValue, int rightValue);
-
     public Expression left() {
         return left;
     }
@@ -18,6 +14,9 @@ abstract class BinaryExpression implements Expression {
     public Expression right() {
         return right;
     }
+
+    abstract String operator ();
+    abstract int evaluate (int leftValue, int rightValue);
 
     @Override
     public String toString () {

@@ -5,13 +5,9 @@ import java.awt.*;
 
 public class MainFrame extends JFrame {
     public MainFrame () {
-        super ("Swing Demo");
-
-
+        super ("TANK BATTLE");
         setJMenuBar (createMenu ());
-
-        setSize (800, 800);
-
+        setSize (676, 676);
         setLayout (new BoxLayout (this.getContentPane (), BoxLayout.Y_AXIS));
         add (Box.createVerticalGlue ());
         setLocationRelativeTo (null);
@@ -27,8 +23,8 @@ public class MainFrame extends JFrame {
         exitItem.addActionListener (e -> System.exit (0));
 
         fileMenu.add (exitItem);
-
         menuBar.add (fileMenu);
+
         return menuBar;
     }
 }
