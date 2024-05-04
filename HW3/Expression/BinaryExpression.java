@@ -1,4 +1,4 @@
-abstract class BinaryExpression extends Expression {
+abstract class BinaryExpression implements Expression {
     Expression left;
     Expression right;
 
