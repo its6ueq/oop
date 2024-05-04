@@ -1,15 +1,15 @@
 abstract class BinaryExpression extends Expression {
-    protected Expression left;
-    protected Expression right;
+    Expression left;
+    Expression right;
 
     public BinaryExpression(Expression left, Expression right) {
         this.left = left;
         this.right = right;
     }
 
-    protected abstract String operator ();
+    abstract String operator ();
 
-    protected abstract int evaluate (int leftValue, int rightValue);
+    abstract int evaluate (int leftValue, int rightValue);
 
     public Expression left() {
         return left;

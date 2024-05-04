@@ -4,12 +4,12 @@ class Addition extends BinaryExpression {
     }
 
     @Override
-    protected String operator () {
+    String operator () {
         return "+";
     }
 
     @Override
-    protected int evaluate(int leftValue, int rightValue) {
+    int evaluate(int leftValue, int rightValue) {
         return leftValue + rightValue;
     }
 
