@@ -1,6 +1,7 @@
 package gui;
 
 import game.object.Tank;
+import object.Bullet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
@@ -21,22 +23,37 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     Tank p1;
 
-    int TIMER_DELAY = 16;
+    int TIMER_DELAY = 1000/60;
     Timer gameLoop;
+
+    ArrayList<Bullet> bullets = new ArrayList<>();
 
     GamePanel () {
         setPreferredSize (new Dimension (screenWidth, screenHeight));
 
         setFocusable (true);
         addKeyListener (this);
-        p1 = new Tank(10, 10 , 20, 20, 10, 1, 3);
-
+        p1 = new Tank(10, 10 , 10, 1, 3);
         gameLoop = new Timer(TIMER_DELAY, this);
         gameLoop.start();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        p1move ();
+        bulletMove();
+        if(bullets != null) {
+            for(Bullet bullet : bullets){
+                bullet.move ();
+            }
+        }
+        repaint();
+    }
+
+    void bulletMove(){
+
+    }
+    void p1move(){
         if (p1_moveup) {
             p1.moveUp();
         }
@@ -49,7 +66,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (p1_moveright) {
             p1.moveRight();
         }
-        repaint();
     }
 
     @Override
@@ -80,6 +96,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 p1_moveleft = false;
                 p1_moveright = true;
                 break;
+            case KeyEvent.VK_J:
+                bullets.add(p1.shot ());
             default:
                 break;
         }
@@ -121,8 +139,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setFont (new Font ("Arial", Font.PLAIN, 32));
         g.drawString ("Game dau uoi` ", 10, 35);
 
-        g.drawImage (p1.image(), p1.getX (), p1.getY (), 32, 32, null);
+        if(bullets != null) {
+            for(Bullet bullet : bullets){
+                g.drawImage (bullet.getImage (), bullet.getX(), bullet.getY(), null);
+            }
+        }
 
+        g.drawImage (p1.getImage(), p1.getX (), p1.getY (), null);
     }
+
+
 }
 

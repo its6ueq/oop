@@ -5,12 +5,19 @@ import java.awt.*;
 
 public class MainFrame extends JFrame {
     public MainFrame () {
+
         super ("TANK BATTLE");
+
         setJMenuBar (createMenu ());
-        setSize (676, 676);
+
+        int screenWidth = 676;
+        int screenHeight = 676;
+
+        setSize (screenWidth, screenHeight);
         setLayout (new BoxLayout (this.getContentPane (), BoxLayout.Y_AXIS));
         add (Box.createVerticalGlue ());
         setLocationRelativeTo (null);
+        setResizable (false);
         setDefaultCloseOperation (DISPOSE_ON_CLOSE);
         setVisible (true);
     }

@@ -18,6 +18,8 @@ public class MainPanel extends JPanel {
         groupLayout.setAutoCreateGaps (true);
         groupLayout.setAutoCreateContainerGaps (true);
 
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
 
         var name = new JLabel ("TANK BATTLE");
         name.setFont (new Font (name.getFont ().getName (), name.getFont ().getStyle (), 40));
@@ -47,7 +49,7 @@ public class MainPanel extends JPanel {
         exit.setMinimumSize (new Dimension (150, 30));
         exit.setMaximumSize (new Dimension (150, 30));
 
-                setBackground (Color.BLACK);
+        setBackground (Color.BLACK);
 
 
         groupLayout.setHorizontalGroup (groupLayout.createParallelGroup (GroupLayout.Alignment.CENTER).addGap (100).addComponent (name).addGap (30).addComponent (newGame).addComponent (scoreBoard).addComponent (exit));

@@ -1,73 +1,64 @@
 package game.object;
 
+import object.Bullet;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Tank {
 
+    public int RIGHT = 1;
+    public int LEFT = 3;
+    public int DOWN = 2;
+    public int UP = 0;
+
     int x;
     int y;
-    int width;
+    int dir;
+
     int height;
+    int width;
+
     int heal;
-    int currDir;
-    Image image;
+    int damage;
     int speed;
 
-    private static Toolkit tk = Toolkit.getDefaultToolkit();
+    Image image;
     private static Image[] tankImages = null;
 
     static {
         tankImages = new Image[] {
-                extractTankImage(0, 0, 32, 32), // p1u
-                extractTankImage(32, 0, 32, 32), // p1r
-                extractTankImage(64, 0, 32, 32), //p1d
-                extractTankImage(96, 32, 32, 32), //p1l
+                extractTankImage(0, 0),
+                extractTankImage(32, 0),
+                extractTankImage(64, 0),
+                extractTankImage(96, 32),
         };
     }
 
-    public Tank (int tankX, int tankY, int tankWidth, int tankHeight, int currHeal, int direction, int speed) {
+    public Tank (int tankX, int tankY, int heal, int damage, int speed) {
         this.x = tankX;
         this.y = tankY;
-        this.width = tankWidth;
-        this.height = tankHeight;
-        this.heal = currHeal;
-        this.currDir = direction;
-        this.image = tankImages[currDir];
+        this.heal = heal;
+        this.damage = damage;
         this.speed = speed;
-
-        if (tankImages != null  && currDir < tankImages.length) {
-            this.image = tankImages[currDir];
-        } else {
-            // Handle the case when tankImages is null or currDir is out of bounds
-            System.out.println("Failed to set image for Tank with direction: " + currDir);
-        }
-
+        this.image = tankImages[dir];
+        this.height = 32;
+        this.width = 32;
     }
 
-    public static void createTank(int tankX, int tankY, int tankWidth, int tankHeight, int currHeal, int direction, int speed) {
-        new Tank(tankX, tankY, tankWidth, tankHeight, currHeal, direction, speed);
+    public static void createTank(int tankX, int tankY, int currHeal, int direction, int speed) {
+        new Tank(tankX, tankY, currHeal, direction, speed);
     }
 
-    private static Image extractTankImage(int x, int y, int width, int height) {
-        System.out.println("Attempting to load texture image...");
-        System.out.println("Resource path: " + Tank.class.getResource("/texture.png"));
-
+    private static Image extractTankImage(int x, int y) {
         Image textureImage = new ImageIcon(Objects.requireNonNull(Tank.class.getResource("/texture.png"))).getImage();
-        if (textureImage == null) {
-            System.out.println("Failed to load the texture image.");
-            return null;
-        }
-
         BufferedImage texture = new BufferedImage(textureImage.getWidth(null), textureImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = texture.createGraphics();
         g2d.drawImage(textureImage, 0, 0, null);
         g2d.dispose();
-
-        return texture.getSubimage(x, y, width, height);
+        return texture.getSubimage(x, y, 32, 32);
     }
 
     public int getX(){
@@ -78,27 +69,47 @@ public class Tank {
         return y;
     }
 
-    public Image image(){
+    public Image getImage(){
         return this.image;
     }
 
     public void moveUp() {
         this.y -= speed;
-        this.image = tankImages[0];
+        dir = UP;
+        this.image = tankImages[dir];
     }
 
     public void moveDown() {
         this.y += speed;
-        this.image = tankImages[2];
+        dir = DOWN;
+        this.image = tankImages[dir];
     }
 
     public void moveLeft() {
         this.x -= speed;
-        this.image = tankImages[3];
+        dir = LEFT;
+        this.image = tankImages[dir];
     }
 
     public void moveRight() {
         this.x += speed;
-        this.image = tankImages[1];
+        dir = RIGHT;
+        this.image = tankImages[dir];
+    }
+
+    public Bullet shot(){
+        if(dir == UP) {
+            return new Bullet (x + 13, y - 6, UP, damage);
+        }
+        else if(dir == DOWN) {
+                return new Bullet (x + 13, y + 32, DOWN, damage);
+        }
+        else if(dir == LEFT) {
+                return new Bullet (x - 8, y + 13, LEFT, damage);
+        }
+        else if(dir == RIGHT) {
+                return new Bullet (x + 32, y + 13, RIGHT, damage);
+        }
+        return null;
     }
 }
