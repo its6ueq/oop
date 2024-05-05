@@ -55,11 +55,20 @@ public class Bullet {
         this.damage = damage;
         this.dir = dir;
         this.image = bulletImages[dir];
+        if(dir == UP || dir == DOWN){
+            height = 8;
+            width = 6;
+        }
+        if(dir == LEFT || dir == RIGHT){
+            height = 6;
+            width = 8;
+        }
     }
 
     public void move(){
         if(dir == UP) {
             y -= speed;
+
         }
         else if(dir == DOWN) {
             y += speed;
@@ -78,6 +87,14 @@ public class Bullet {
 
     public int getY () {
         return this.y;
+    }
+
+    public int getHeight(){
+        return this.height;
+    }
+
+    public int getWidth(){
+        return this.width;
     }
 
     public Image getImage(){

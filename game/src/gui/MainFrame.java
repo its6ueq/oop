@@ -17,7 +17,7 @@ public class MainFrame extends JFrame {
         setLayout (new BoxLayout (this.getContentPane (), BoxLayout.Y_AXIS));
         add (Box.createVerticalGlue ());
         setLocationRelativeTo (null);
-        setResizable (false);
+//        setResizable (false);
         setDefaultCloseOperation (DISPOSE_ON_CLOSE);
         setVisible (true);
     }
