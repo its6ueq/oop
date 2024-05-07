@@ -1,3 +1,5 @@
+
+
 class TextGraphics {
     private static TextGraphics instance;
     int width, height;
@@ -60,7 +62,7 @@ class TextGraphics {
     }
 }
 
-public class Main {
+public class Mainsingleton {
     public static void main (String[] args) {
         TextGraphics graphics = TextGraphics.getInstance ();
         graphics.init (15, 10);

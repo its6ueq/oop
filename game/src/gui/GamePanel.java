@@ -23,8 +23,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     int currStage = 1;
 
-
-
     boolean p1_moveup = false;
     boolean p1_movedown = false;
     boolean p1_moveright = false;
