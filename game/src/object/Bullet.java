@@ -1,8 +1,10 @@
 package object;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Objects;
 
 public class Bullet {
@@ -56,12 +58,12 @@ public class Bullet {
         this.dir = dir;
         this.image = bulletImages[dir];
         if(dir == UP || dir == DOWN){
-            height = 8;
-            width = 6;
+            height = 16;
+            width = 12;
         }
         if(dir == LEFT || dir == RIGHT){
-            height = 6;
-            width = 8;
+            height = 12;
+            width = 16;
         }
     }
 

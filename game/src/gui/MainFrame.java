@@ -10,14 +10,14 @@ public class MainFrame extends JFrame {
 
         setJMenuBar (createMenu ());
 
-        int screenWidth = 676;
-        int screenHeight = 676;
+        int screenWidth = 832;
+        int screenHeight = 892;
 
         setSize (screenWidth, screenHeight);
         setLayout (new BoxLayout (this.getContentPane (), BoxLayout.Y_AXIS));
         add (Box.createVerticalGlue ());
         setLocationRelativeTo (null);
-//        setResizable (false);
+        setResizable (false);
         setDefaultCloseOperation (DISPOSE_ON_CLOSE);
         setVisible (true);
     }

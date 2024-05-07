@@ -2,7 +2,6 @@ package controller;
 
 import gui.MainFrame;
 import gui.MainPanel;
-import gui.Stage2Panel;
 
 public class Controller {
     private final MainFrame mainFrame;

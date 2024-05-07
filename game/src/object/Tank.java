@@ -5,7 +5,9 @@ import object.Bullet;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Objects;
+import javax.imageio.ImageIO;
 
 public class Tank {
 
@@ -44,8 +46,8 @@ public class Tank {
         this.damage = damage;
         this.speed = speed;
         this.image = tankImages[dir];
-        this.height = 32;
-        this.width = 32;
+        this.height = 64;
+        this.width = 64;
     }
 
     public static void createTank(int tankX, int tankY, int currHeal, int direction, int speed) {
@@ -97,18 +99,22 @@ public class Tank {
         this.image = tankImages[dir];
     }
 
+    public int getWidth(){return this.width;}
+
+    public int getHeight(){return this.height;}
+
     public Bullet shot(){
         if(dir == UP) {
-            return new Bullet (x + 13, y - 6, UP, damage);
+            return new Bullet (x + 26, y - 12, UP, damage);
         }
         else if(dir == DOWN) {
-                return new Bullet (x + 13, y + 32, DOWN, damage);
+                return new Bullet (x + 26, y + 64, DOWN, damage);
         }
         else if(dir == LEFT) {
-                return new Bullet (x - 8, y + 13, LEFT, damage);
+                return new Bullet (x - 16, y + 26, LEFT, damage);
         }
         else if(dir == RIGHT) {
-                return new Bullet (x + 32, y + 13, RIGHT, damage);
+                return new Bullet (x + 64, y + 26, RIGHT, damage);
         }
         return null;
     }

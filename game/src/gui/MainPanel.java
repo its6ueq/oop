@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.FileNotFoundException;
 
 
 public class MainPanel extends JPanel {
@@ -33,7 +33,12 @@ public class MainPanel extends JPanel {
         newGame.addActionListener (new ActionListener () {
             @Override
             public void actionPerformed (ActionEvent e) {
-                GamePanel gamepanel = new GamePanel ();
+                GamePanel gamepanel = null;
+                try {
+                    gamepanel = new GamePanel ();
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException (ex);
+                }
                 JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor (MainPanel.this);
                 mainFrame.setContentPane (gamepanel);
                 gamepanel.requestFocus ();
