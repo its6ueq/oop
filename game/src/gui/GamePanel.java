@@ -13,15 +13,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
     int screenWidth = 832;
     int screenHeight = 832;
 
-    int currStage = 1;
+    int currState = 1;
 
     boolean p1_moveup = false;
     boolean p1_movedown = false;
@@ -34,6 +33,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     Timer gameLoop;
     Timer nextState;
 
+    ArrayList<ArrayList<Character>> map;
 
     ArrayList<Brick> bricks = new ArrayList<> ();
     ArrayList<Tank> botTanks = new ArrayList<> ();
@@ -42,15 +42,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     ArrayList<TankExplore> tankexplorings = new ArrayList<> ();
 
     GamePanel () throws FileNotFoundException {
+        map = readMap();
+        buildMap();
 
-
-        ArrayList<ArrayList<Character>> map = readMap();
         setPreferredSize (new Dimension (screenWidth, screenHeight));
         setFocusable (true);
         addKeyListener (this);
 
-        p1 = new Tank(10, 10 , 10, 1, 2);
-
+        p1 = new Tank(392, 784, 10, 1, 2);
 
         nextState = new Timer(10, new ActionListener() {
             @Override
@@ -82,39 +81,98 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         gameLoop.start();
     }
 
+    //import map
     ArrayList<ArrayList<Character>> readMap () throws FileNotFoundException {
         ArrayList<ArrayList<Character>> map = new ArrayList<>();
+        try {
+            BufferedReader in = new BufferedReader(new FileReader ("levels/" + currState));
+            String line;
+            while ((line = in.readLine ()) != null){
+                ArrayList<Character> currLine = new ArrayList<>();
+                for (int i = 0; i < line.length(); i++){
+                    currLine.add(line.charAt(i));
+                }
+                map.add(currLine);
+            }
+            in.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(map.get(2));
         return map;
     }
 
-
+    void buildMap(){
+        for(int i = 0; i < 26; i++){
+            for(int j = 0; j < 26; j++){
+                char currChar = map.get(j).get(i);
+                if(currChar == '#'){
+                    Brick brick = new Brick (i * 32, j * 32);
+                    bricks.add(brick);
+                }
+            }
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         p1move ();
         bulletMove();
         checkBulletHit();
+        checkRemoved();
         repaint();
         Toolkit.getDefaultToolkit().sync();
     }
 
-    void checkBulletHit(){
-        if(bullets != null) {
-            Iterator<Bullet> iterator = bullets.iterator();
-            while(iterator.hasNext()) {
-                Bullet bullet = iterator.next();
-                if(bullet.getX() + bullet.getWidth() > screenWidth || bullet.getX() < 0){
-                    Explore explore = new Explore(bullet.getX() - 24, bullet.getY() - 26);
-                    iterator.remove();
-                    explorings.add(explore);
-                }
-                if(bullet.getY() + bullet.getHeight () > screenHeight || bullet.getY() < 0){
-                    Explore explore = new Explore(bullet.getX() - 26, bullet.getY() - 24);
-                    iterator.remove();
-                    explorings.add(explore);
+    void checkRemoved() {
+        if (bullets != null) {
+            Iterator<Bullet> iterator = bullets.iterator ();
+            while (iterator.hasNext ()) {
+                Bullet bullet = iterator.next ();
+                if (bullet.getDamage () <= 0) {
+                    Explore explore = new Explore (bullet.getX () - 32 + bullet.getWidth (), bullet.getY () - 32 + bullet.getHeight ());
+                    iterator.remove ();
+                    explorings.add (explore);
                 }
             }
         }
+        if (bricks != null) {
+            Iterator<Brick> iterator = bricks.iterator ();
+            while (iterator.hasNext ()) {
+                Brick brick = iterator.next ();
+                if (brick.getHeal () <= 0) {
+                    iterator.remove ();
+                }
+            }
+        }
+    }
+
+    void checkBulletHit () {
+        if (bullets != null) {
+            for (Bullet bullet : bullets) {
+                if ((bullet.getX () + bullet.getWidth () > screenWidth || bullet.getX () < 0) || (bullet.getY () + bullet.getHeight () > screenHeight || bullet.getY () < 0)) {
+                    bullet.getDamaged (bullet.getDamage ());
+                }
+                for (Brick brick : bricks) {
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), brick.getX (), brick.getY (), brick.getHeight (), brick.getWidth ())) {
+                        int dmg = Math.min(bullet.getDamage(), brick.getHeal());
+                        System.out.println (dmg);
+                        brick.getDamaged(dmg);
+                        bullet.getDamaged(dmg);
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isHit(int o1x, int o1y, int o1h, int o1w, int o2x, int o2y, int o2h, int o2w){
+        if(o1x < o2x && o1x + o1w > o2x && o1y < o2y && o1y + o1h > o2y) return true;
+        if(o2x < o1x && o2x + o2w > o1x && o2y < o1y && o2y + o2h > o1y) return true;
+        if(o1x < o2x && o1x + o1w > o2x && o2y < o1y && o2y + o2h > o1y) return true;
+        if(o2x < o1x && o2x + o2w > o1x && o1y < o2y && o1y + o1h > o2y) return true;
+        return false;
     }
     void bulletMove(){
         if(bullets != null) {
@@ -203,9 +261,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public void draw (Graphics g) {
 
         setBackground (Color.BLACK);
-
         g.setFont (new Font ("Arial", Font.PLAIN, 32));
-        g.drawString ("Game dau uoi` ", 10, 35);
+        g.drawString ("Game", 10, 35);
+
+        drawMap(g);
 
         if(bullets != null) {
             for(Bullet bullet : bullets){
@@ -213,7 +272,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        g.drawImage (p1.getImage(), p1.getX (), p1.getY (), 64, 64, null);
+        g.drawImage (p1.getImage(), p1.getX (), p1.getY (), p1.getWidth (), p1.getHeight (), null);
 
 
         if(explorings != null) {
@@ -224,7 +283,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         if(tankexplorings != null) {
             for(TankExplore explore : tankexplorings){
-                g.drawImage (explore.getImage (), explore.getX (), explore.getY (), 64, 64, null);
+                g.drawImage (explore.getImage (), explore.getX (), explore.getY (), explore.getWidth (), explore.getHeight (), null);
+            }
+        }
+    }
+
+    void drawMap(Graphics g){
+        if(bricks != null){
+            for(Brick brick : bricks){
+                g.drawImage (brick.getImage (), brick.getX (), brick.getY (), brick.getWidth (), brick.getHeight (), null);
             }
         }
     }

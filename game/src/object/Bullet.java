@@ -18,9 +18,11 @@ public class Bullet {
     int height;
     int width;
     int damage;
+
     int dir;
     Image image;
     int speed = 15;
+
     private static Image[] bulletImages = null;
 
     static {
@@ -38,7 +40,7 @@ public class Bullet {
         Graphics2D g2d = texture.createGraphics();
         g2d.drawImage(textureImage, 0, 0, null);
         g2d.dispose();
-        return texture.getSubimage(x, y, 6, 8);
+        return texture.getSubimage(x, y, 4, 6);
     }
 
     private static Image extractBulletImage(int x, int y) {
@@ -47,7 +49,7 @@ public class Bullet {
         Graphics2D g2d = texture.createGraphics();
         g2d.drawImage(textureImage, 0, 0, null);
         g2d.dispose();
-        return texture.getSubimage(x, y, 8, 6);
+        return texture.getSubimage(x, y, 6, 4);
     }
 
 
@@ -98,6 +100,10 @@ public class Bullet {
     public int getWidth(){
         return this.width;
     }
+
+    public int getDamage() {return this.damage; }
+
+    public void getDamaged(int damage) {this.damage -= damage;}
 
     public Image getImage(){
         return this.image;

@@ -10,6 +10,8 @@ import java.util.Objects;
 public class Explore {
     int x;
     int y;
+    int width;
+    int height;
     int state;
     Image image;
 
@@ -39,6 +41,8 @@ public class Explore {
         this.y = y;
         this.state = 0;
         this.image = exploreImages[state];
+        this.width = 64;
+        this.height = 64;
     }
 
     public int nextState(){
@@ -59,6 +63,14 @@ public class Explore {
 
     public int getY(){
         return y;
+    }
+
+    public int getHeight(){
+        return height;
+    }
+
+    public int getWidth(){
+        return width;
     }
 
 }

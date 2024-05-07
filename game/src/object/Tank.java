@@ -46,8 +46,8 @@ public class Tank {
         this.damage = damage;
         this.speed = speed;
         this.image = tankImages[dir];
-        this.height = 64;
-        this.width = 64;
+        this.height = 48;
+        this.width = 48;
     }
 
     public static void createTank(int tankX, int tankY, int currHeal, int direction, int speed) {
@@ -105,16 +105,16 @@ public class Tank {
 
     public Bullet shot(){
         if(dir == UP) {
-            return new Bullet (x + 26, y - 12, UP, damage);
+            return new Bullet (x + 19, y - 9, UP, damage);
         }
         else if(dir == DOWN) {
-                return new Bullet (x + 26, y + 64, DOWN, damage);
+                return new Bullet (x + 19, y + 48, DOWN, damage);
         }
         else if(dir == LEFT) {
-                return new Bullet (x - 16, y + 26, LEFT, damage);
+                return new Bullet (x - 12, y + 19, LEFT, damage);
         }
         else if(dir == RIGHT) {
-                return new Bullet (x + 64, y + 26, RIGHT, damage);
+                return new Bullet (x + 48, y + 19, RIGHT, damage);
         }
         return null;
     }

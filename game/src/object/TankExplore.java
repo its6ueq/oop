@@ -10,6 +10,8 @@ import java.util.Objects;
 public class TankExplore {
     int x;
     int y;
+    int width;
+    int height;
     int state;
     BufferedImage image;
 
@@ -45,6 +47,8 @@ public class TankExplore {
         this.y = y;
         this.state = 0;
         this.image = exploreImages[3];
+        this.width = 64;
+        this.height = 64;
     }
 
     public int nextState(){
@@ -65,6 +69,14 @@ public class TankExplore {
 
     public int getY(){
         return y;
+    }
+
+    public int getHeight(){
+        return height;
+    }
+
+    public int getWidth(){
+        return width;
     }
 
 }

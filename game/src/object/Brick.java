@@ -11,12 +11,14 @@ public class Brick {
     int y;
     int height = 32;
     int width = 32;
+    int heal;
 
-    Image image = new ImageIcon (Objects.requireNonNull(Explore.class.getResource("/Brick.png"))).getImage();
+    Image image = new ImageIcon (Objects.requireNonNull(Explore.class.getResource("/brick.png"))).getImage();
 
     public Brick (int x, int y) {
         this.x = x;
         this.y = y;
+        this.heal = 3;
     }
 
     public Image getImage(){
@@ -38,4 +40,8 @@ public class Brick {
     public int getWidth(){
         return width;
     }
+
+    public int getHeal() {return heal;};
+
+    public void getDamaged(int damage){this.heal -= damage;};
 }
