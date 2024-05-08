@@ -1,5 +1,6 @@
-package game.object;
+package object;
 
+import gui.GamePanel;
 import object.Brick;
 import object.Bullet;
 
@@ -8,37 +9,58 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
-public class Tank {
+import static gui.GamePanel.bricks;
+import static gui.GamePanel.bullets;
+
+public abstract class Tank {
     public int screenWidth = 832;
     public int screenHeight = 832;
 
-
-    public int RIGHT = 1;
-    public int LEFT = 3;
-    public int DOWN = 2;
-    public int UP = 0;
+    public static int RIGHT = 1;
+    public static int LEFT = 3;
+    public static int DOWN = 2;
+    public static int UP = 0;
 
     int x;
     int y;
     int dir;
+    int currMove = 5;
+    //0 : shot, 1: up, 2: left, 3: down, 4: right
 
     int height;
     int width;
+    int tankType = 0;
 
     int heal;
     int damage;
     int speed;
 
+    int speedReload;
+    int currBullet;
+    int maxBullet;
+
     Image image;
-    private static Image[] tankImages = null;
+    public static Image[] tankImages = null;
 
     static {
         tankImages = new Image[] {
                 extractTankImage(0, 0),
                 extractTankImage(32, 0),
                 extractTankImage(64, 0),
-                extractTankImage(96, 32),
+                extractTankImage(96, 0),
+
+                extractTankImage(256, 0),
+                extractTankImage(288, 0),
+                extractTankImage(320, 0),
+                extractTankImage(352, 0),
+
+                extractTankImage (128, 0),
+                extractTankImage (160, 0),
+                extractTankImage (192, 0),
+                extractTankImage (224, 0),
+
         };
     }
 
@@ -48,16 +70,13 @@ public class Tank {
         this.heal = heal;
         this.damage = damage;
         this.speed = speed;
-        this.image = tankImages[dir];
         this.height = 48;
         this.width = 48;
+        this.maxBullet = 3;
+        this.currBullet = this.maxBullet;
     }
 
-    public static void createTank(int tankX, int tankY, int currHeal, int direction, int speed) {
-        new Tank(tankX, tankY, currHeal, direction, speed);
-    }
-
-    private static Image extractTankImage(int x, int y) {
+    protected static Image extractTankImage (int x, int y) {
         Image textureImage = new ImageIcon(Objects.requireNonNull(Tank.class.getResource("/texture.png"))).getImage();
         BufferedImage texture = new BufferedImage(textureImage.getWidth(null), textureImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = texture.createGraphics();
@@ -78,53 +97,89 @@ public class Tank {
         return this.image;
     }
 
-    public void moveUp() {
-        this.y -= speed;
-        dir = UP;
-        this.image = tankImages[dir];
-    }
-
-    public void moveDown() {
-        this.y += speed;
-        dir = DOWN;
-        this.image = tankImages[dir];
-    }
-
-    public void moveLeft() {
-        this.x -= speed;
-        dir = LEFT;
-        this.image = tankImages[dir];
-    }
-
-    public void moveRight() {
-        this.x += speed;
-        dir = RIGHT;
-        this.image = tankImages[dir];
-    }
-
     public int getWidth(){return this.width;}
 
     public int getHeight(){return this.height;}
 
-    public Bullet shot(){
-        if(dir == UP) {
-            return new Bullet (x + 19, y - 9, UP, damage);
+    public void move() {
+        switch (currMove) {
+            case 0:
+                this.shot();
+                break;
+            case 1:
+                this.moveUp ();
+                break;
+            case 2:
+                this.moveLeft ();
+                break;
+            case 3:
+                this.moveDown ();
+                break;
+            case 4:
+                this.moveRight ();
+                break;
+            default:
+                break;
         }
-        else if(dir == DOWN) {
+    }
+
+    public void shot(){}
+    public Bullet addBullet(){
+        if(currBullet > 0){
+            currBullet--;
+            if(dir == UP) {
+                return new Bullet (x + 19, y - 9, UP, damage);
+            }
+            else if(dir == DOWN) {
                 return new Bullet (x + 19, y + 48, DOWN, damage);
-        }
-        else if(dir == LEFT) {
+            }
+            else if(dir == LEFT) {
                 return new Bullet (x - 12, y + 19, LEFT, damage);
-        }
-        else if(dir == RIGHT) {
+            }
+            else if(dir == RIGHT) {
                 return new Bullet (x + 48, y + 19, RIGHT, damage);
+            }
         }
         return null;
     }
 
-    public boolean canGoUp(ArrayList<Brick> bricks){
+    public void loadBullet (){
+        if(this.currBullet < this.maxBullet){
+            this.currBullet++;
+        }
+    }
+
+    public void moveUp() {
+        if(this.canGoUp ()){
+            this.y -= speed;
+            dir = UP;
+        }
+    }
+
+    public void moveDown() {
+        if(this.canGoDown ()){
+            this.y += speed;
+            dir = DOWN;
+        }
+    }
+
+    public void moveLeft() {
+        if(this.canGoLeft ()){
+            this.x -= speed;
+            dir = LEFT;
+        }
+    }
+
+    public void moveRight() {
+        if(this.canGoRight ()){
+            this.x += speed;
+            dir = RIGHT;
+        }
+    }
+
+    public boolean canGoUp(){
         this.dir = UP;
-        this.image = tankImages[dir];
+        this.image = tankImages[tankType * 4 + dir];
         if(this.getY () == 0) return false;
 
         if(bricks != null){
@@ -139,9 +194,9 @@ public class Tank {
         return true;
     }
 
-    public boolean canGoDown(ArrayList<Brick> bricks){
+    public boolean canGoDown(){
         this.dir = DOWN;
-        this.image = tankImages[dir];
+        this.image = tankImages[tankType * 4 + dir];
         if(this.getY() + this.getHeight () == screenHeight) return false;
 
         if(bricks != null){
@@ -154,9 +209,9 @@ public class Tank {
         return true;
     }
 
-    public boolean canGoLeft(ArrayList<Brick> bricks){
+    public boolean canGoLeft(){
         this.dir = LEFT;
-        this.image = tankImages[dir];
+        this.image = tankImages[tankType * 4 + dir];
 
         if(this.getX() == 0) return false;
 
@@ -170,9 +225,9 @@ public class Tank {
     }
 
 
-    public boolean canGoRight(ArrayList<Brick> bricks){
+    public boolean canGoRight(){
         this.dir = RIGHT;
-        this.image = tankImages[dir];
+        this.image = tankImages[tankType * 4 + dir];
 
         if(this.getX() + this.getWidth () == screenWidth)
             return false;
