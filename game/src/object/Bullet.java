@@ -1,10 +1,8 @@
 package object;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Objects;
 
 public class Bullet {
@@ -40,7 +38,7 @@ public class Bullet {
         Graphics2D g2d = texture.createGraphics();
         g2d.drawImage(textureImage, 0, 0, null);
         g2d.dispose();
-        return texture.getSubimage(x, y, 4, 6);
+        return texture.getSubimage(x, y, 6, 8);
     }
 
     private static Image extractBulletImage(int x, int y) {
@@ -49,7 +47,7 @@ public class Bullet {
         Graphics2D g2d = texture.createGraphics();
         g2d.drawImage(textureImage, 0, 0, null);
         g2d.dispose();
-        return texture.getSubimage(x, y, 6, 4);
+        return texture.getSubimage(x, y, 8, 6);
     }
 
 
@@ -60,12 +58,12 @@ public class Bullet {
         this.dir = dir;
         this.image = bulletImages[dir];
         if(dir == UP || dir == DOWN){
-            height = 16;
-            width = 12;
+            height = 12;
+            width = 8;
         }
         if(dir == LEFT || dir == RIGHT){
-            height = 12;
-            width = 16;
+            height = 8;
+            width = 12;
         }
     }
 

@@ -1,15 +1,18 @@
 package game.object;
 
+import object.Brick;
 import object.Bullet;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
-import javax.imageio.ImageIO;
 
 public class Tank {
+    public int screenWidth = 832;
+    public int screenHeight = 832;
+
 
     public int RIGHT = 1;
     public int LEFT = 3;
@@ -118,4 +121,68 @@ public class Tank {
         }
         return null;
     }
+
+    public boolean canGoUp(ArrayList<Brick> bricks){
+        this.dir = UP;
+        this.image = tankImages[dir];
+        if(this.getY () == 0) return false;
+
+        if(bricks != null){
+            for (Brick brick : bricks) {
+                if(this.getY() == brick.getY() + brick.getHeight ()){
+                    if(this.getX() - brick.getWidth() < brick.getX() && brick.getX () < this.getX() + this.getWidth())
+                        return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public boolean canGoDown(ArrayList<Brick> bricks){
+        this.dir = DOWN;
+        this.image = tankImages[dir];
+        if(this.getY() + this.getHeight () == screenHeight) return false;
+
+        if(bricks != null){
+            for (Brick brick : bricks) {
+                if(this.getY() + this.getHeight () == brick.getY() && this.getX() - brick.getWidth() < brick.getX() && brick.getX () < this.getX() + this.getWidth())
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean canGoLeft(ArrayList<Brick> bricks){
+        this.dir = LEFT;
+        this.image = tankImages[dir];
+
+        if(this.getX() == 0) return false;
+
+        if(bricks != null){
+            for (Brick brick : bricks) {
+                if(this.getX () == brick.getX () + brick.getWidth () && this.getY() - brick.getHeight () < brick.getY () && brick.getY () < this.getY () + this.getHeight ())
+                    return false;
+            }
+        }
+        return true;
+    }
+
+
+    public boolean canGoRight(ArrayList<Brick> bricks){
+        this.dir = RIGHT;
+        this.image = tankImages[dir];
+
+        if(this.getX() + this.getWidth () == screenWidth)
+            return false;
+        if(bricks != null){
+            for (Brick brick : bricks) {
+                if(this.getX () + this.getWidth () == brick.getX () && this.getY() - brick.getHeight () < brick.getY () && brick.getY () < this.getY () + this.getHeight ())
+                    return false;
+            }
+        }
+        return true;
+    }
+
 }

@@ -17,10 +17,10 @@ import java.io.*;
 import java.util.*;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
-    int screenWidth = 832;
-    int screenHeight = 832;
+    public int screenWidth = 832;
+    public int screenHeight = 832;
 
-    int currState = 1;
+    int currState = 3;
 
     boolean p1_moveup = false;
     boolean p1_movedown = false;
@@ -99,8 +99,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println(map.get(2));
         return map;
     }
 
@@ -158,7 +156,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 for (Brick brick : bricks) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), brick.getX (), brick.getY (), brick.getHeight (), brick.getWidth ())) {
                         int dmg = Math.min(bullet.getDamage(), brick.getHeal());
-                        System.out.println (dmg);
                         brick.getDamaged(dmg);
                         bullet.getDamaged(dmg);
                     }
@@ -183,19 +180,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     void p1move(){
-        if (p1_moveup && p1.getY() > 0) {
+        if (p1_moveup && p1.canGoUp(bricks)) {
             p1.moveUp();
         }
-        if (p1_movedown && p1.getY() + p1.getHeight () < screenHeight) {
+        if (p1_movedown && p1.canGoDown (bricks)) {
             p1.moveDown();
         }
-        if (p1_moveleft && p1.getX() > 0) {
+        if (p1_moveleft && p1.canGoLeft (bricks)) {
             p1.moveLeft();
         }
-        if (p1_moveright && p1.getX() + p1.getWidth () < screenWidth) {
+        if (p1_moveright && p1.canGoRight (bricks)) {
             p1.moveRight();
         }
     }
+
+
 
     @Override
     public void keyPressed(KeyEvent e) {
