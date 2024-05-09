@@ -46,8 +46,8 @@ public class TankExplore {
         this.y = y;
         this.state = 0;
         this.image = exploreImages[3];
-        this.width = 64;
-        this.height = 64;
+        this.width = 96;
+        this.height = 96;
     }
 
     public int nextState(){

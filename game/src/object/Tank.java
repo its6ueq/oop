@@ -1,18 +1,14 @@
 package object;
 
-import gui.GamePanel;
-import object.Brick;
-import object.Bullet;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
+import static gui.GamePanel.botTanks;
 import static gui.GamePanel.bricks;
-import static gui.GamePanel.bullets;
+import static gui.GamePanel.p1;
+import static gui.GamePanel.p2;
 
 public abstract class Tank {
     public int screenWidth = 832;
@@ -26,7 +22,8 @@ public abstract class Tank {
     int x;
     int y;
     int dir;
-    int currMove = 5;
+    int currMove = 0;
+
     //0 : shot, 1: up, 2: left, 3: down, 4: right
 
     int height;
@@ -46,20 +43,20 @@ public abstract class Tank {
 
     static {
         tankImages = new Image[] {
-                extractTankImage(0, 0),
-                extractTankImage(32, 0),
-                extractTankImage(64, 0),
-                extractTankImage(96, 0),
+                extractTankImage(0, 7 * 32),
+                extractTankImage(32, 7 * 32),
+                extractTankImage(64, 7 * 32),
+                extractTankImage(96, 7 * 32),
 
-                extractTankImage(256, 0),
-                extractTankImage(288, 0),
-                extractTankImage(320, 0),
-                extractTankImage(352, 0),
+                extractTankImage(256, 7 * 32),
+                extractTankImage(288, 7 * 32),
+                extractTankImage(320, 7 * 32),
+                extractTankImage(352, 7 * 32),
 
-                extractTankImage (128, 0),
-                extractTankImage (160, 0),
-                extractTankImage (192, 0),
-                extractTankImage (224, 0),
+                extractTankImage (128, 7 * 32),
+                extractTankImage (160, 7 * 32),
+                extractTankImage (192, 7 * 32),
+                extractTankImage (224, 7 * 32),
 
         };
     }
@@ -101,11 +98,16 @@ public abstract class Tank {
 
     public int getHeight(){return this.height;}
 
+    public void getDamaged(int damage){
+        this.heal -= damage;
+    }
+
+    public int getHeal(){
+        return this.heal;
+    }
+
     public void move() {
         switch (currMove) {
-            case 0:
-                this.shot();
-                break;
             case 1:
                 this.moveUp ();
                 break;
@@ -124,21 +126,19 @@ public abstract class Tank {
     }
 
     public void shot(){}
+
     public Bullet addBullet(){
-        if(currBullet > 0){
-            currBullet--;
-            if(dir == UP) {
-                return new Bullet (x + 19, y - 9, UP, damage);
-            }
-            else if(dir == DOWN) {
-                return new Bullet (x + 19, y + 48, DOWN, damage);
-            }
-            else if(dir == LEFT) {
-                return new Bullet (x - 12, y + 19, LEFT, damage);
-            }
-            else if(dir == RIGHT) {
-                return new Bullet (x + 48, y + 19, RIGHT, damage);
-            }
+        if(dir == UP) {
+            return new Bullet (x + 19, y - 9, UP, damage);
+        }
+        else if(dir == DOWN) {
+            return new Bullet (x + 19, y + 48, DOWN, damage);
+        }
+        else if(dir == LEFT) {
+            return new Bullet (x - 12, y + 19, LEFT, damage);
+        }
+        else if(dir == RIGHT) {
+            return new Bullet (x + 48, y + 19, RIGHT, damage);
         }
         return null;
     }
@@ -184,15 +184,39 @@ public abstract class Tank {
 
         if(bricks != null){
             for (Brick brick : bricks) {
-                if(this.getY() == brick.getY() + brick.getHeight ()){
+                if(this.getY() - speed < brick.getY() + brick.getHeight () && this.getY() + speed > brick.getY() + brick.getHeight ()){
                     if(this.getX() - brick.getWidth() < brick.getX() && brick.getX () < this.getX() + this.getWidth())
                         return false;
                 }
             }
         }
 
+        if(botTanks != null){
+            for (BotTank bot : botTanks) {
+                if(this.getY() - speed < bot.getY() + bot.getHeight () && this.getY() + speed > bot.getY() + bot.getHeight ()){
+                    if(this.getX() - bot.getWidth() < bot.getX() && bot.getX () < this.getX() + this.getWidth())
+                        return false;
+                }
+            }
+        }
+
+        if(p1 != null){
+            if(this.getY() - speed < p1.getY() + p1.getHeight () && this.getY() + speed > p1.getY() + p1.getHeight ()){
+                if(this.getX() - p1.getWidth() < p1.getX() && p1.getX () < this.getX() + this.getWidth())
+                    return false;
+            }
+        }
+
+        if(p2 != null){
+            if(this.getY() - speed < p2.getY() + p2.getHeight () && this.getY() + speed > p2.getY() + p2.getHeight ()){
+                if(this.getX() - p2.getWidth() < p2.getX() && p2.getX () < this.getX() + this.getWidth())
+                    return false;
+            }
+        }
+
         return true;
     }
+
 
     public boolean canGoDown(){
         this.dir = DOWN;
@@ -201,13 +225,40 @@ public abstract class Tank {
 
         if(bricks != null){
             for (Brick brick : bricks) {
-                if(this.getY() + this.getHeight () == brick.getY() && this.getX() - brick.getWidth() < brick.getX() && brick.getX () < this.getX() + this.getWidth())
+                if(brick.getY() - speed < this.getY() + this.getHeight () && brick.getY () + speed > this.getY() + this.getHeight ()){
+                    if(this.getX() - brick.getWidth() < brick.getX() && brick.getX () < this.getX() + this.getWidth())
+                        return false;
+
+                }
+            }
+        }
+
+        if(botTanks != null){
+            for (BotTank bot : botTanks) {
+                if(bot.getY() - speed < this.getY() + this.getHeight () && bot.getY () + speed > this.getY() + this.getHeight ()){
+                    if(this.getX() - bot.getWidth() < bot.getX() && bot.getX () < this.getX() + this.getWidth())
+                        return false;
+                }
+            }
+        }
+
+        if(p1 != null){
+            if(p1.getY() - speed < this.getY() + this.getHeight () && p1.getY () + speed > this.getY() + this.getHeight ()){
+                if(this.getX() - p1.getWidth() < p1.getX() && p1.getX () < this.getX() + this.getWidth())
+                    return false;
+            }
+        }
+
+        if(p2 != null){
+            if(p2.getY() - speed < this.getY() + this.getHeight () && p2.getY () + speed > this.getY() + this.getHeight ()){
+                if(this.getX() - p2.getWidth() < p2.getX() && p2.getX () < this.getX() + this.getWidth())
                     return false;
             }
         }
 
         return true;
     }
+
 
     public boolean canGoLeft(){
         this.dir = LEFT;
@@ -217,10 +268,37 @@ public abstract class Tank {
 
         if(bricks != null){
             for (Brick brick : bricks) {
-                if(this.getX () == brick.getX () + brick.getWidth () && this.getY() - brick.getHeight () < brick.getY () && brick.getY () < this.getY () + this.getHeight ())
+                if(this.getX () - speed < brick.getX () + brick.getWidth () && this.getX () + speed > brick.getX () + brick.getWidth ()){
+                        if(this.getY() - brick.getHeight () < brick.getY () && brick.getY () < this.getY () + this.getHeight ())
+                            return false;
+                }
+            }
+        }
+
+        if(botTanks != null){
+            for (BotTank bot : botTanks) {
+                if(this.getX () - speed < bot.getX () + bot.getWidth () && this.getX () + speed > bot.getX () + bot.getWidth ()){
+                    if(this.getY() - bot.getHeight () < bot.getY () && bot.getY () < this.getY () + this.getHeight ())
+                        return false;
+
+                }
+            }
+        }
+
+        if(p1 != null){
+            if(this.getX () - speed < p1.getX () + p1.getWidth () && this.getX () + speed > p1.getX () + p1.getWidth ()){
+                if(this.getY() - p1.getHeight () < p1.getY () && p1.getY () < this.getY () + this.getHeight ())
                     return false;
             }
         }
+
+        if(p2 != null){
+            if(this.getX () - speed < p2.getX () + p2.getWidth () && this.getX () + speed > p2.getX () + p2.getWidth ()){
+                if(this.getY() - p2.getHeight () < p2.getY () && p2.getY () < this.getY () + this.getHeight ())
+                    return false;
+            }
+        }
+
         return true;
     }
 
@@ -231,12 +309,39 @@ public abstract class Tank {
 
         if(this.getX() + this.getWidth () == screenWidth)
             return false;
+
         if(bricks != null){
             for (Brick brick : bricks) {
-                if(this.getX () + this.getWidth () == brick.getX () && this.getY() - brick.getHeight () < brick.getY () && brick.getY () < this.getY () + this.getHeight ())
+                if(brick.getX () - speed < this.getX () + this.getWidth () && brick.getX () + speed > this.getX () + this.getWidth ()) {
+                    if (this.getY () - brick.getHeight () < brick.getY () && brick.getY () < this.getY () + this.getHeight ())
+                        return false;
+                }
+            }
+        }
+
+        if(botTanks != null){
+            for (BotTank bot : botTanks) {
+                if(bot.getX () - speed < this.getX () + this.getWidth () && bot.getX () + speed > this.getX () + this.getWidth ()) {
+                    if (this.getY () - bot.getHeight () < bot.getY () && bot.getY () < this.getY () + this.getHeight ())
+                        return false;
+                }
+            }
+        }
+
+        if(p1 != null) {
+            if (p1.getX () - speed < this.getX () + this.getWidth () && p1.getX () + speed > this.getX () + this.getWidth ()) {
+                if (this.getY () - p1.getHeight () < p1.getY () && p1.getY () < this.getY () + this.getHeight ())
                     return false;
             }
         }
+
+        if(p2 != null){
+            if (p2.getX () - speed < this.getX () + this.getWidth () && p2.getX () + speed > this.getX () + this.getWidth ()) {
+                if (this.getY () - p2.getHeight () < p2.getY () && p2.getY () < this.getY () + this.getHeight ())
+                    return false;
+            }
+        }
+
         return true;
     }
 

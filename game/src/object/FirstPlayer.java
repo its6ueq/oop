@@ -15,16 +15,14 @@ public class FirstPlayer extends object.Tank {
 
     @Override
     public void shot() {
-        if(this.currMove == 0){
-            Bullet bullet = this.addBullet ();
-            if(bullet != null)
-                bullets.add (bullet);
-        }
+        if(this.currBullet == 0) return;
+        this.currBullet--;
+        Bullet bullet = this.addBullet();
+        if(bullet != null)
+            bullets.add(bullet);
     }
 
-
-
-    //0 : shot, 1: up, 2: left, 3: down, 4: right
+    //1: up, 2: left, 3: down, 4: right
     public void changeMove(int key){
         switch (key) {
             case KeyEvent.VK_W:
@@ -40,7 +38,8 @@ public class FirstPlayer extends object.Tank {
                 this.currMove = 4;
                 break;
             case KeyEvent.VK_J:
-                bullets.add(this.addBullet ());
+                this.shot ();
+                break;
             default:
                 break;
         }

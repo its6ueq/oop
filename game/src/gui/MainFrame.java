@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
         add (Box.createVerticalGlue ());
         setLocationRelativeTo (null);
         setResizable (false);
-        setDefaultCloseOperation (DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation (EXIT_ON_CLOSE);
         setVisible (true);
     }
 

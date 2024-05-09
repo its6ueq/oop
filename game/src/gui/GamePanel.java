@@ -20,8 +20,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     boolean is2P = true;
     int currState = 1;
 
-    FirstPlayer p1;
-    SecondPlayer p2;
+    public static FirstPlayer p1;
+    public static SecondPlayer p2;
+
+
 
     int TIMER_DELAY = 1000/60;
     Timer gameLoop;
@@ -52,26 +54,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         //exlore
-        nextState = new Timer(10, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!explorings.isEmpty()) {
-                    Iterator<Explore> iterator = explorings.iterator();
-                    while (iterator.hasNext()) {
-                        Explore explore = iterator.next();
-                        if (explore.nextState() == 5) {
-                            iterator.remove();
-                        }
+        nextState = new Timer(10, e -> {
+            if (!explorings.isEmpty()) {
+                Iterator<Explore> iterator = explorings.iterator();
+                while (iterator.hasNext()) {
+                    Explore explore = iterator.next();
+                    if (explore.nextState() == 5) {
+                        iterator.remove();
                     }
                 }
-                if (!tankexplorings.isEmpty()) {
-                    Iterator<TankExplore> iterator = tankexplorings.iterator();
-                    while (iterator.hasNext()) {
-                        TankExplore explore = iterator.next();
-                        if (explore.nextState() == 7) {
-                            iterator.remove();
-                        }
+            }
+            if (!tankexplorings.isEmpty()) {
+                Iterator<TankExplore> iterator = tankexplorings.iterator();
+                while (iterator.hasNext()) {
+                    TankExplore explore = iterator.next();
+                    if (explore.nextState() == 7) {
+                        iterator.remove();
                     }
                 }
             }
@@ -87,7 +85,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         });
         botMove.start ();
 
-        addBullet = new Timer (1000, e-> {
+        addBullet = new Timer (500, e-> {
             p1.loadBullet ();
             p2.loadBullet ();
             if(botTanks != null){
@@ -187,6 +185,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         }
 
+        if (botTanks!= null) {
+            Iterator<BotTank> iterator = botTanks.iterator ();
+            while (iterator.hasNext ()) {
+                BotTank bot = iterator.next ();
+                if (bot.getHeal () <= 0) {
+                    TankExplore explore = new TankExplore (bot.getX () - 48 + bot.getWidth (), bot.getY () - 48 + bot.getHeight ());
+                    iterator.remove ();
+                    tankexplorings.add (explore);
+                }
+            }
+        }
+
         if (bricks != null) {
             Iterator<Brick> iterator = bricks.iterator ();
             while (iterator.hasNext ()) {
@@ -211,6 +221,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         bullet.getDamaged(dmg);
                     }
                 }
+                for (BotTank bot : botTanks) {
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), bot.getX (), bot.getY (), bot.getHeight (), bot.getWidth ())) {
+                        int dmg = Math.min(bullet.getDamage(), bot.getHeal());
+                        bot.getDamaged(dmg);
+                        bullet.getDamaged(dmg);
+                    }
+                }
             }
         }
         if (enermyBullets != null) {
@@ -224,6 +241,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         brick.getDamaged(dmg);
                         bullet.getDamaged(dmg);
                     }
+                }
+                if(isHit(bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p1.getX (), p1.getY (), p1.getHeight (), p1.getWidth ())){
+                    int dmg = Math.min(bullet.getDamage(), p1.getHeal());
+                    p1.getDamaged(dmg);
+                    bullet.getDamaged(dmg);
+                }
+                if(isHit(bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p2.getX (), p2.getY (), p2.getHeight (), p2.getWidth ())){
+                    int dmg = Math.min(bullet.getDamage(), p2.getHeal());
+                    p2.getDamaged(dmg);
+                    bullet.getDamaged(dmg);
                 }
             }
         }
@@ -308,7 +335,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         if(explorings != null) {
             for(Explore explore : explorings){
-                g.drawImage (explore.getImage (), explore.getX(), explore.getY(), 64, 64, null);
+                g.drawImage (explore.getImage (), explore.getX(), explore.getY(), explore.getWidth (), explore.getHeight (), null);
             }
         }
 

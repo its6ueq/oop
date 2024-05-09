@@ -18,18 +18,20 @@ public class BotTank extends object.Tank {
 
     @Override
     public void shot() {
-        if(this.currMove == 0){
-            Bullet bullet = this.addBullet ();
-            if(bullet != null)
-                enermyBullets.add (bullet);
-        }
+        if(this.currBullet == 0) return;
+        this.currBullet--;
+        Bullet bullet = this.addBullet ();
+        if(bullet != null)
+            enermyBullets.add (bullet);
     }
 
     //0 : shot, 1: up, 2: left, 3: down, 4: right
 
     public void changeMove(){
         Random rand = new Random();
-        this.currMove = rand.nextInt(5);
+        if(rand.nextDouble () < 0.5)
+            this.shot ();
+        else this.currMove = rand.nextInt(5);
     }
 }
 
