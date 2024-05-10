@@ -1,8 +1,6 @@
 package gui;
 
-import jdk.internal.icu.text.UnicodeSet;
 import object.*;
-
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
@@ -190,7 +188,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             while (iterator.hasNext ()) {
                 BotTank bot = iterator.next ();
                 if (bot.getHeal () <= 0) {
-                    TankExplore explore = new TankExplore (bot.getX () - 48 + bot.getWidth (), bot.getY () - 48 + bot.getHeight ());
+                    TankExplore explore = new TankExplore (bot.getX () - 24, bot.getY () - 24);
                     iterator.remove ();
                     tankexplorings.add (explore);
                 }
