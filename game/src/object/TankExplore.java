@@ -33,7 +33,7 @@ public class TankExplore {
     }
 
     private static BufferedImage extractExploreImages(int x, int y) throws IOException {
-        Image textureImage = new ImageIcon (Objects.requireNonNull(Brick.class.getResource("/texture.png"))).getImage();
+        Image textureImage = new ImageIcon (Objects.requireNonNull(StaticObject.class.getResource("/texture.png"))).getImage();
         BufferedImage texture = new BufferedImage(textureImage.getWidth(null), textureImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = texture.createGraphics();
         g2d.drawImage(textureImage, 0, 0, null);

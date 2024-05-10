@@ -16,12 +16,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public int screenHeight = 832;
 
     boolean is2P = true;
-    int currState = 1;
+    int currState = 35;
 
     public static FirstPlayer p1;
     public static SecondPlayer p2;
-
-
 
     int TIMER_DELAY = 1000/60;
     Timer gameLoop;
@@ -31,10 +29,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     ArrayList<ArrayList<Character>> map;
 
-    public static ArrayList<Brick> bricks = new ArrayList<> ();
+    public static ArrayList<StaticObject> bricks = new ArrayList<> ();
+    public static ArrayList<StaticObject> stones = new ArrayList<> ();
+    public static ArrayList<StaticObject> waters = new ArrayList<> ();
+    public static ArrayList<StaticObject> bushes = new ArrayList<> ();
+
     public static ArrayList<BotTank> botTanks = new ArrayList<> ();
+
     public static ArrayList<Bullet> bullets = new ArrayList<> ();
     public static ArrayList<Bullet> enermyBullets = new ArrayList<> ();
+
     ArrayList<Explore> explorings = new ArrayList<> ();
     ArrayList<TankExplore> tankexplorings = new ArrayList<> ();
 
@@ -124,8 +128,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             for(int j = 0; j < 26; j++){
                 char currChar = map.get(j).get(i);
                 if(currChar == '#'){
-                    Brick brick = new Brick (i * 32, j * 32);
+                    StaticObject brick = new StaticObject (i * 32, j * 32, 0);
                     bricks.add(brick);
+                }
+                if(currChar == '@'){
+                    StaticObject stone = new StaticObject (i * 32, j * 32, 1);
+                    stones.add(stone);
+                }
+                if(currChar == '~'){
+                    StaticObject water = new StaticObject (i * 32, j * 32, 2);
+                    waters.add(water);
+                }
+                if(currChar == '%'){
+                    StaticObject bush = new StaticObject (i * 32, j * 32, 3);
+                    bushes.add(bush);
                 }
                 if(currChar == 'X'){
                     BotTank bot = new BotTank (i * 32, j * 32, 5, 1, 1);
@@ -148,6 +164,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         checkRemoved();
 
         repaint();
+
         Toolkit.getDefaultToolkit().sync();
     }
 
@@ -196,9 +213,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         if (bricks != null) {
-            Iterator<Brick> iterator = bricks.iterator ();
+            Iterator<StaticObject> iterator = bricks.iterator ();
             while (iterator.hasNext ()) {
-                Brick brick = iterator.next ();
+                StaticObject brick = iterator.next ();
                 if (brick.getHeal () <= 0) {
                     iterator.remove ();
                 }
@@ -212,13 +229,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 if ((bullet.getX () + bullet.getWidth () > screenWidth || bullet.getX () < 0) || (bullet.getY () + bullet.getHeight () > screenHeight || bullet.getY () < 0)) {
                     bullet.getDamaged (bullet.getDamage ());
                 }
-                for (Brick brick : bricks) {
+
+                for (StaticObject brick : bricks) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), brick.getX (), brick.getY (), brick.getHeight (), brick.getWidth ())) {
                         int dmg = Math.min(bullet.getDamage(), brick.getHeal());
                         brick.getDamaged(dmg);
                         bullet.getDamaged(dmg);
                     }
                 }
+
+                for (StaticObject stone : stones) {
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), stone.getX (), stone.getY (), stone.getHeight (), stone.getWidth ())) {
+                        bullet.getDamaged(stone.getHeal ());
+                    }
+                }
+
                 for (BotTank bot : botTanks) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), bot.getX (), bot.getY (), bot.getHeight (), bot.getWidth ())) {
                         int dmg = Math.min(bullet.getDamage(), bot.getHeal());
@@ -233,7 +258,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 if ((bullet.getX () + bullet.getWidth () > screenWidth || bullet.getX () < 0) || (bullet.getY () + bullet.getHeight () > screenHeight || bullet.getY () < 0)) {
                     bullet.getDamaged (bullet.getDamage ());
                 }
-                for (Brick brick : bricks) {
+                for (StaticObject brick : bricks) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), brick.getX (), brick.getY (), brick.getHeight (), brick.getWidth ())) {
                         int dmg = Math.min(bullet.getDamage(), brick.getHeal());
                         brick.getDamaged(dmg);
@@ -307,7 +332,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setFont (new Font ("Arial", Font.PLAIN, 32));
         g.drawString ("Game", 10, 35);
 
+        if(waters != null) {
+            for (StaticObject water : waters) {
+                g.drawImage (water.getImage (), water.getX (), water.getY (), water.getWidth (), water.getHeight (), null);
+            }
+        }
+
+        drawTank (g);
         drawMap(g);
+        drawExplore(g);
+    }
+
+    void drawTank (Graphics g){
+
+        if (p1 != null) {
+            g.drawImage (p1.getImage(), p1.getX (), p1.getY (), p1.getWidth (), p1.getHeight (), null);
+        }
+
+        if (p2 != null){
+            g.drawImage (p2.getImage (), p2.getX (), p2.getY (), p2.getWidth (), p2.getHeight (), null);
+        }
 
         if(botTanks != null){
             for(BotTank bot : botTanks){
@@ -326,11 +370,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 g.drawImage (bullet.getImage (), bullet.getX(), bullet.getY(), bullet.getWidth (), bullet.getHeight (), null);
             }
         }
+    }
 
-        g.drawImage (p1.getImage(), p1.getX (), p1.getY (), p1.getWidth (), p1.getHeight (), null);
-        g.drawImage (p2.getImage (), p2.getX (), p2.getY (), p2.getWidth (), p2.getHeight (), null);
+    void drawMap(Graphics g){
+        if(bricks != null){
+            for(StaticObject brick : bricks){
+                g.drawImage (brick.getImage (), brick.getX (), brick.getY (), brick.getWidth (), brick.getHeight (), null);
+            }
+        }
+        if(bushes != null){
+            for(StaticObject bush : bushes){
+                g.drawImage (bush.getImage (), bush.getX (), bush.getY (), bush.getWidth (), bush.getHeight (), null);
+            }
+        }
+        if(stones != null){
+            for(StaticObject stone : stones){
+                g.drawImage (stone.getImage (), stone.getX (), stone.getY (), stone.getWidth (), stone.getHeight (), null);
+            }
+        }
 
 
+    }
+
+    void drawExplore(Graphics g){
         if(explorings != null) {
             for(Explore explore : explorings){
                 g.drawImage (explore.getImage (), explore.getX(), explore.getY(), explore.getWidth (), explore.getHeight (), null);
@@ -340,14 +402,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if(tankexplorings != null) {
             for(TankExplore explore : tankexplorings){
                 g.drawImage (explore.getImage (), explore.getX (), explore.getY (), explore.getWidth (), explore.getHeight (), null);
-            }
-        }
-    }
-
-    void drawMap(Graphics g){
-        if(bricks != null){
-            for(Brick brick : bricks){
-                g.drawImage (brick.getImage (), brick.getX (), brick.getY (), brick.getWidth (), brick.getHeight (), null);
             }
         }
     }
