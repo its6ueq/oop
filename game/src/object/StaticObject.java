@@ -6,37 +6,23 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class StaticObject {
+    public static Image[] objectImages = null;
+
+    static {
+        objectImages = new Image[] {extractObjectImage (29 * 32, 0), extractObjectImage (29 * 32, 9 * 16), extractObjectImage (29 * 32, 10 * 16), extractObjectImage (29 * 32, 12 * 16),};
+    }
+
     int x;
     int y;
     int height = 32;
     int width = 32;
     int heal;
-
     Image image;
-    public static Image[] objectImages = null;
-
-    static {
-        objectImages = new Image[] {
-                extractObjectImage (29 * 32, 0),
-                extractObjectImage (29 * 32, 9 * 16),
-                extractObjectImage (29 * 32, 10 * 16),
-                extractObjectImage (29 * 32, 12 * 16),
-        };
-    }
-
-    protected static Image extractObjectImage (int x, int y) {
-        Image objectImage = new ImageIcon(Objects.requireNonNull(StaticObject.class.getResource("/texture.png"))).getImage();
-        BufferedImage texture = new BufferedImage(objectImage.getWidth(null), objectImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = texture.createGraphics();
-        g2d.drawImage(objectImage, 0, 0, null);
-        g2d.dispose();
-        return texture.getSubimage(x, y, 16, 16);
-    }
 
     public StaticObject (int x, int y, int obj) {
         this.x = x;
         this.y = y;
-        switch (obj){
+        switch (obj) {
             case 0:
                 this.heal = 3;
                 this.image = objectImages[0];
@@ -58,27 +44,44 @@ public class StaticObject {
         }
     }
 
-    public Image getImage(){
+    protected static Image extractObjectImage (int x, int y) {
+        Image objectImage = new ImageIcon (Objects.requireNonNull (StaticObject.class.getResource ("/texture/texture.png"))).getImage ();
+        BufferedImage texture = new BufferedImage (objectImage.getWidth (null), objectImage.getHeight (null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = texture.createGraphics ();
+        g2d.drawImage (objectImage, 0, 0, null);
+        g2d.dispose ();
+        return texture.getSubimage (x, y, 16, 16);
+    }
+
+    public Image getImage () {
         return image;
     }
 
-    public int getX(){
+    public int getX () {
         return x;
     }
 
-    public int getY(){
+    public int getY () {
         return y;
     }
 
-    public int getHeight(){
+    public int getHeight () {
         return height;
     }
 
-    public int getWidth(){
+    public int getWidth () {
         return width;
     }
 
-    public int getHeal() {return heal;};
+    public int getHeal () {
+        return heal;
+    }
 
-    public void getDamaged(int damage){this.heal -= damage;};
+    ;
+
+    public void getDamaged (int damage) {
+        this.heal -= damage;
+    }
+
+    ;
 }

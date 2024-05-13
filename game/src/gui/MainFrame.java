@@ -1,9 +1,10 @@
 package gui;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class MainFrame extends JFrame {
+    public static int currState = 0;
+
     public MainFrame () {
 
         super ("TANK BATTLE");
@@ -27,7 +28,7 @@ public class MainFrame extends JFrame {
         var fileMenu = new JMenu ("File");
         var exitItem = new JMenuItem ("Exit");
 
-        exitItem.addActionListener (e -> System.exit (0));
+        exitItem.addActionListener (_ -> System.exit (0));
 
         fileMenu.add (exitItem);
         menuBar.add (fileMenu);

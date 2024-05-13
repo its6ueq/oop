@@ -1,181 +1,205 @@
 package gui;
 
+import controller.Controller;
 import object.*;
+
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import static gui.MainFrame.currState;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
-    public int screenWidth = 832;
-    public int screenHeight = 832;
-
-    boolean is2P = true;
-    int currState = 35;
+    public static boolean is2P = true;
 
     public static FirstPlayer p1;
     public static SecondPlayer p2;
-
-    int TIMER_DELAY = 1000/60;
+    public static ArrayList<StaticObject> bricks;
+    public static ArrayList<StaticObject> stones;
+    public static ArrayList<StaticObject> waters;
+    public static ArrayList<StaticObject> bushes;
+    public static ArrayList<BotTank> botTanks;
+    public static ArrayList<Bullet> bullets;
+    public static ArrayList<Bullet> enermyBullets;
+    public int screenWidth;
+    public int screenHeight;
+    int TIMER_DELAY;
     Timer gameLoop;
     Timer nextState;
     Timer botMove;
     Timer addBullet;
-
     ArrayList<ArrayList<Character>> map;
+    ArrayList<Explore> explorings;
+    ArrayList<TankExplore> tankexplorings;
 
-    public static ArrayList<StaticObject> bricks = new ArrayList<> ();
-    public static ArrayList<StaticObject> stones = new ArrayList<> ();
-    public static ArrayList<StaticObject> waters = new ArrayList<> ();
-    public static ArrayList<StaticObject> bushes = new ArrayList<> ();
+    int enemyTanks;
+    int allyTanks;
 
-    public static ArrayList<BotTank> botTanks = new ArrayList<> ();
+    public GamePanel () {
+        screenWidth = 832;
+        screenHeight = 832;
+        TIMER_DELAY = 1000 / 60;
+        bullets = new ArrayList<> ();
+        enermyBullets = new ArrayList<> ();
+        enemyTanks = 0;
+        allyTanks = 1;
 
-    public static ArrayList<Bullet> bullets = new ArrayList<> ();
-    public static ArrayList<Bullet> enermyBullets = new ArrayList<> ();
+        p1 = new FirstPlayer (300, 784, 10, 1, 2);
 
-    ArrayList<Explore> explorings = new ArrayList<> ();
-    ArrayList<TankExplore> tankexplorings = new ArrayList<> ();
+        if (is2P) {
+            p2 = new SecondPlayer (480, 784, 10, 1, 2);
+            allyTanks++;
+        }
 
-    GamePanel () throws FileNotFoundException {
-        map = readMap();
-        buildMap();
+        bricks = new ArrayList<> ();
+        stones = new ArrayList<> ();
+        waters = new ArrayList<> ();
+        bushes = new ArrayList<> ();
+        botTanks = new ArrayList<> ();
+        explorings = new ArrayList<> ();
+        tankexplorings = new ArrayList<> ();
+
+        map = readMap ();
+        buildMap ();
 
         setPreferredSize (new Dimension (screenWidth, screenHeight));
         setFocusable (true);
         addKeyListener (this);
 
-        p1 = new FirstPlayer (300, 784, 10, 1, 2);
-        if(is2P){
-            p2 = new SecondPlayer (480, 784, 10, 1, 2);
-        }
 
         //exlore
-        nextState = new Timer(10, e -> {
-            if (!explorings.isEmpty()) {
-                Iterator<Explore> iterator = explorings.iterator();
-                while (iterator.hasNext()) {
-                    Explore explore = iterator.next();
-                    if (explore.nextState() == 5) {
-                        iterator.remove();
-                    }
-                }
+        nextState = new Timer (10, _ -> {
+            if (!explorings.isEmpty ()) {
+                explorings.removeIf (explore -> explore.nextState () == 5);
             }
-            if (!tankexplorings.isEmpty()) {
-                Iterator<TankExplore> iterator = tankexplorings.iterator();
-                while (iterator.hasNext()) {
-                    TankExplore explore = iterator.next();
-                    if (explore.nextState() == 7) {
-                        iterator.remove();
-                    }
-                }
+            if (!tankexplorings.isEmpty ()) {
+                tankexplorings.removeIf (explore -> explore.nextState () == 7);
             }
         });
         nextState.start ();
 
-        botMove = new Timer (1000, e -> {
-            if(botTanks != null){
-                for (BotTank tank : botTanks){
+        botMove = new Timer (1000, _ -> {
+            if (botTanks != null) {
+                for (BotTank tank : botTanks) {
                     tank.changeMove ();
                 }
             }
         });
         botMove.start ();
 
-        addBullet = new Timer (500, e-> {
-            p1.loadBullet ();
-            p2.loadBullet ();
-            if(botTanks != null){
-                for(BotTank bot : botTanks)
+        addBullet = new Timer (500, _ -> {
+            if (p1 != null) {
+                p1.loadBullet ();
+            }
+            if (p2 != null) {
+                p2.loadBullet ();
+            }
+
+            if (botTanks != null) {
+                for (BotTank bot : botTanks)
                     bot.loadBullet ();
             }
         });
         addBullet.start ();
 
-        gameLoop = new Timer(TIMER_DELAY, this);
-        gameLoop.start();
+        gameLoop = new Timer (TIMER_DELAY, this);
+        gameLoop.start ();
     }
 
+    void defeat () {
+        currState = -1;
+        botMove.stop ();
+        addBullet.stop ();
+        gameLoop.stop ();
+        Controller.changeState ();
+    }
 
-    ArrayList<ArrayList<Character>> readMap () throws FileNotFoundException {
+    void victory () {
+        botMove.stop ();
+        addBullet.stop ();
+        gameLoop.stop ();
+        Controller.changeState ();
+    }
+
+    ArrayList<ArrayList<Character>> readMap () {
         //import map
-        ArrayList<ArrayList<Character>> map = new ArrayList<>();
+        ArrayList<ArrayList<Character>> map = new ArrayList<> ();
         try {
-            BufferedReader in = new BufferedReader(new FileReader ("levels/" + currState));
+            BufferedReader in = new BufferedReader (new FileReader ("resource/levels/" + currState));
             String line;
-            while ((line = in.readLine ()) != null){
-                ArrayList<Character> currLine = new ArrayList<>();
-                for (int i = 0; i < line.length(); i++){
-                    currLine.add(line.charAt(i));
+            while ((line = in.readLine ()) != null) {
+                ArrayList<Character> currLine = new ArrayList<> ();
+                for (int i = 0; i < line.length (); i++) {
+                    currLine.add (line.charAt (i));
                 }
-                map.add(currLine);
+                map.add (currLine);
             }
-            in.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+            in.close ();
+        } catch (IOException e) {
+            e.printStackTrace ();
         }
         return map;
     }
 
-    void buildMap(){
-        for(int i = 0; i < 26; i++){
-            for(int j = 0; j < 26; j++){
-                char currChar = map.get(j).get(i);
-                if(currChar == '#'){
+    void buildMap () {
+        for (int i = 0; i < 26; i++) {
+            for (int j = 0; j < 26; j++) {
+                char currChar = map.get (j).get (i);
+                if (currChar == '#') {
                     StaticObject brick = new StaticObject (i * 32, j * 32, 0);
-                    bricks.add(brick);
+                    bricks.add (brick);
                 }
-                if(currChar == '@'){
+                if (currChar == '@') {
                     StaticObject stone = new StaticObject (i * 32, j * 32, 1);
-                    stones.add(stone);
+                    stones.add (stone);
                 }
-                if(currChar == '~'){
+                if (currChar == '~') {
                     StaticObject water = new StaticObject (i * 32, j * 32, 2);
-                    waters.add(water);
+                    waters.add (water);
                 }
-                if(currChar == '%'){
+                if (currChar == '%') {
                     StaticObject bush = new StaticObject (i * 32, j * 32, 3);
-                    bushes.add(bush);
+                    bushes.add (bush);
                 }
-                if(currChar == 'X'){
+                if (currChar == 'X') {
                     BotTank bot = new BotTank (i * 32, j * 32, 5, 1, 1);
-                    botTanks.add(bot);
+                    botTanks.add (bot);
+                    enemyTanks++;
                 }
             }
         }
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        p1.move();
-        p2.move();
-        bottankmove();
-
-        bulletMove();
-
-        checkBulletHit();
-
-        checkRemoved();
-
-        repaint();
-
-        Toolkit.getDefaultToolkit().sync();
+    public void actionPerformed (ActionEvent e) {
+        if (p1 != null)
+            p1.move ();
+        if (p2 != null)
+            p2.move ();
+        bottankmove ();
+        bulletMove ();
+        checkBulletHit ();
+        checkRemoved ();
+        repaint ();
+        Toolkit.getDefaultToolkit ().sync ();
     }
 
-    void bottankmove(){
-        if(botTanks != null){
-            for(BotTank tank : botTanks)
+    void bottankmove () {
+        if (botTanks != null) {
+            for (BotTank tank : botTanks)
                 tank.move ();
         }
     }
 
-    void checkRemoved() {
+    void checkRemoved () {
         if (bullets != null) {
             Iterator<Bullet> iterator = bullets.iterator ();
             while (iterator.hasNext ()) {
@@ -200,7 +224,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        if (botTanks!= null) {
+        if (botTanks != null) {
             Iterator<BotTank> iterator = botTanks.iterator ();
             while (iterator.hasNext ()) {
                 BotTank bot = iterator.next ();
@@ -208,18 +232,38 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     TankExplore explore = new TankExplore (bot.getX () - 24, bot.getY () - 24);
                     iterator.remove ();
                     tankexplorings.add (explore);
+                    enemyTanks--;
+                    System.out.println (enemyTanks);
+                    if (enemyTanks <= 0)
+                        victory ();
                 }
             }
         }
 
-        if (bricks != null) {
-            Iterator<StaticObject> iterator = bricks.iterator ();
-            while (iterator.hasNext ()) {
-                StaticObject brick = iterator.next ();
-                if (brick.getHeal () <= 0) {
-                    iterator.remove ();
-                }
+        if (p1 != null) {
+            if (p1.getHeal () <= 0) {
+                TankExplore explore = new TankExplore (p1.getX () - 24, p1.getY () - 24);
+                tankexplorings.add (explore);
+                p1 = null;
+                allyTanks--;
+                if (allyTanks == 0)
+                    defeat ();
             }
+        }
+
+        if (p2 != null) {
+            if (p2.getHeal () <= 0) {
+                TankExplore explore = new TankExplore (p2.getX () - 24, p2.getY () - 24);
+                tankexplorings.add (explore);
+                p2 = null;
+                allyTanks--;
+                if (allyTanks == 0)
+                    defeat ();
+            }
+        }
+
+        if (bricks != null) {
+            bricks.removeIf (brick -> brick.getHeal () <= 0);
         }
     }
 
@@ -232,23 +276,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
                 for (StaticObject brick : bricks) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), brick.getX (), brick.getY (), brick.getHeight (), brick.getWidth ())) {
-                        int dmg = Math.min(bullet.getDamage(), brick.getHeal());
-                        brick.getDamaged(dmg);
-                        bullet.getDamaged(dmg);
+                        int dmg = Math.min (bullet.getDamage (), brick.getHeal ());
+                        brick.getDamaged (dmg);
+                        bullet.getDamaged (dmg);
                     }
                 }
 
                 for (StaticObject stone : stones) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), stone.getX (), stone.getY (), stone.getHeight (), stone.getWidth ())) {
-                        bullet.getDamaged(stone.getHeal ());
+                        bullet.getDamaged (stone.getHeal ());
                     }
                 }
 
                 for (BotTank bot : botTanks) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), bot.getX (), bot.getY (), bot.getHeight (), bot.getWidth ())) {
-                        int dmg = Math.min(bullet.getDamage(), bot.getHeal());
-                        bot.getDamaged(dmg);
-                        bullet.getDamaged(dmg);
+                        int dmg = Math.min (bullet.getDamage (), bot.getHeal ());
+                        bot.getDamaged (dmg);
+                        bullet.getDamaged (dmg);
                     }
                 }
             }
@@ -258,66 +302,90 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 if ((bullet.getX () + bullet.getWidth () > screenWidth || bullet.getX () < 0) || (bullet.getY () + bullet.getHeight () > screenHeight || bullet.getY () < 0)) {
                     bullet.getDamaged (bullet.getDamage ());
                 }
+
                 for (StaticObject brick : bricks) {
                     if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), brick.getX (), brick.getY (), brick.getHeight (), brick.getWidth ())) {
-                        int dmg = Math.min(bullet.getDamage(), brick.getHeal());
-                        brick.getDamaged(dmg);
-                        bullet.getDamaged(dmg);
+                        int dmg = Math.min (bullet.getDamage (), brick.getHeal ());
+                        brick.getDamaged (dmg);
+                        bullet.getDamaged (dmg);
                     }
                 }
-                if(isHit(bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p1.getX (), p1.getY (), p1.getHeight (), p1.getWidth ())){
-                    int dmg = Math.min(bullet.getDamage(), p1.getHeal());
-                    p1.getDamaged(dmg);
-                    bullet.getDamaged(dmg);
+
+                for (StaticObject stone : stones) {
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), stone.getX (), stone.getY (), stone.getHeight (), stone.getWidth ())) {
+                        int dmg = Math.min (bullet.getDamage (), stone.getHeal ());
+                        stone.getDamaged (dmg);
+                        bullet.getDamaged (dmg);
+                    }
                 }
-                if(isHit(bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p2.getX (), p2.getY (), p2.getHeight (), p2.getWidth ())){
-                    int dmg = Math.min(bullet.getDamage(), p2.getHeal());
-                    p2.getDamaged(dmg);
-                    bullet.getDamaged(dmg);
+
+                if (p1 != null) {
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p1.getX (), p1.getY (), p1.getHeight (), p1.getWidth ())) {
+                        int dmg = Math.min (bullet.getDamage (), p1.getHeal ());
+                        p1.getDamaged (dmg);
+                        bullet.getDamaged (dmg);
+                    }
+                }
+                if (p2 != null) {
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p2.getX (), p2.getY (), p2.getHeight (), p2.getWidth ())) {
+                        int dmg = Math.min (bullet.getDamage (), p2.getHeal ());
+                        p2.getDamaged (dmg);
+                        bullet.getDamaged (dmg);
+                    }
                 }
             }
         }
     }
 
-    public boolean isHit(int o1x, int o1y, int o1h, int o1w, int o2x, int o2y, int o2h, int o2w){
-        if(o1x < o2x && o1x + o1w > o2x && o1y < o2y && o1y + o1h > o2y) return true;
-        if(o2x < o1x && o2x + o2w > o1x && o2y < o1y && o2y + o2h > o1y) return true;
-        if(o1x < o2x && o1x + o1w > o2x && o2y < o1y && o2y + o2h > o1y) return true;
-        if(o2x < o1x && o2x + o2w > o1x && o1y < o2y && o1y + o1h > o2y) return true;
-        return false;
+    public boolean isHit (int o1x, int o1y, int o1h, int o1w, int o2x, int o2y, int o2h, int o2w) {
+        if (o1x < o2x && o1x + o1w > o2x && o1y < o2y && o1y + o1h > o2y)
+            return true;
+        if (o2x < o1x && o2x + o2w > o1x && o2y < o1y && o2y + o2h > o1y)
+            return true;
+        if (o1x < o2x && o1x + o1w > o2x && o2y < o1y && o2y + o2h > o1y)
+            return true;
+        return o2x < o1x && o2x + o2w > o1x && o1y < o2y && o1y + o1h > o2y;
     }
-    void bulletMove(){
-        if(bullets != null) {
-            for(Bullet bullet : bullets){
-                if(bullet != null)
+
+    void bulletMove () {
+        if (bullets != null) {
+            for (Bullet bullet : bullets) {
+                if (bullet != null)
+                    bullet.move ();
+            }
+        }
+
+        if (enermyBullets != null) {
+            for (Bullet bullet : enermyBullets) {
                 bullet.move ();
             }
         }
+    }
 
-        if(enermyBullets != null) {
-            for(Bullet bullet : enermyBullets){
-                bullet.move ();
-            }
+    @Override
+    public void keyPressed (KeyEvent e) {
+        int key = e.getKeyCode ();
+        if (p1 != null) {
+            p1.changeMove (key);
+        }
+        if (p2 != null) {
+            p2.changeMove (key);
         }
     }
 
-
-
     @Override
-    public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-        p1.changeMove (key);
-        p2.changeMove (key);
+    public void keyTyped (KeyEvent e) {
     }
-
-    @Override
-    public void keyTyped (KeyEvent e) {}
 
     @Override
     public void keyReleased (KeyEvent e) {
-        int key = e.getKeyCode();
-        p1.stopMove (key);
-        p2.stopMove (key);
+        int key = e.getKeyCode ();
+        if (p1 != null) {
+            p1.stopMove (key);
+        }
+        if (p2 != null) {
+            p2.stopMove (key);
+        }
     }
 
     @Override
@@ -330,61 +398,63 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         setBackground (Color.BLACK);
         g.setFont (new Font ("Arial", Font.PLAIN, 32));
-        g.drawString ("Game", 10, 35);
+        g.setColor (Color.WHITE);
+        g.drawString ("Nhìn source code bẩn mắt vãi cứt !!", 10, 35);
 
-        if(waters != null) {
+
+        if (waters != null) {
             for (StaticObject water : waters) {
                 g.drawImage (water.getImage (), water.getX (), water.getY (), water.getWidth (), water.getHeight (), null);
             }
         }
 
         drawTank (g);
-        drawMap(g);
-        drawExplore(g);
+        drawMap (g);
+        drawExplore (g);
     }
 
-    void drawTank (Graphics g){
+    void drawTank (Graphics g) {
 
         if (p1 != null) {
-            g.drawImage (p1.getImage(), p1.getX (), p1.getY (), p1.getWidth (), p1.getHeight (), null);
+            g.drawImage (p1.getImage (), p1.getX (), p1.getY (), p1.getWidth (), p1.getHeight (), null);
         }
 
-        if (p2 != null){
+        if (p2 != null) {
             g.drawImage (p2.getImage (), p2.getX (), p2.getY (), p2.getWidth (), p2.getHeight (), null);
         }
 
-        if(botTanks != null){
-            for(BotTank bot : botTanks){
+        if (botTanks != null) {
+            for (BotTank bot : botTanks) {
                 g.drawImage (bot.getImage (), bot.getX (), bot.getY (), bot.getWidth (), bot.getHeight (), null);
             }
         }
 
-        if(bullets != null) {
-            for(Bullet bullet : bullets){
-                g.drawImage (bullet.getImage (), bullet.getX(), bullet.getY(), bullet.getWidth (), bullet.getHeight (), null);
+        if (bullets != null) {
+            for (Bullet bullet : bullets) {
+                g.drawImage (bullet.getImage (), bullet.getX (), bullet.getY (), bullet.getWidth (), bullet.getHeight (), null);
             }
         }
 
-        if(enermyBullets != null) {
-            for(Bullet bullet : enermyBullets){
-                g.drawImage (bullet.getImage (), bullet.getX(), bullet.getY(), bullet.getWidth (), bullet.getHeight (), null);
+        if (enermyBullets != null) {
+            for (Bullet bullet : enermyBullets) {
+                g.drawImage (bullet.getImage (), bullet.getX (), bullet.getY (), bullet.getWidth (), bullet.getHeight (), null);
             }
         }
     }
 
-    void drawMap(Graphics g){
-        if(bricks != null){
-            for(StaticObject brick : bricks){
+    void drawMap (Graphics g) {
+        if (bricks != null) {
+            for (StaticObject brick : bricks) {
                 g.drawImage (brick.getImage (), brick.getX (), brick.getY (), brick.getWidth (), brick.getHeight (), null);
             }
         }
-        if(bushes != null){
-            for(StaticObject bush : bushes){
+        if (bushes != null) {
+            for (StaticObject bush : bushes) {
                 g.drawImage (bush.getImage (), bush.getX (), bush.getY (), bush.getWidth (), bush.getHeight (), null);
             }
         }
-        if(stones != null){
-            for(StaticObject stone : stones){
+        if (stones != null) {
+            for (StaticObject stone : stones) {
                 g.drawImage (stone.getImage (), stone.getX (), stone.getY (), stone.getWidth (), stone.getHeight (), null);
             }
         }
@@ -392,15 +462,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     }
 
-    void drawExplore(Graphics g){
-        if(explorings != null) {
-            for(Explore explore : explorings){
-                g.drawImage (explore.getImage (), explore.getX(), explore.getY(), explore.getWidth (), explore.getHeight (), null);
+    void drawExplore (Graphics g) {
+        if (explorings != null) {
+            for (Explore explore : explorings) {
+                g.drawImage (explore.getImage (), explore.getX (), explore.getY (), explore.getWidth (), explore.getHeight (), null);
             }
         }
 
-        if(tankexplorings != null) {
-            for(TankExplore explore : tankexplorings){
+        if (tankexplorings != null) {
+            for (TankExplore explore : tankexplorings) {
                 g.drawImage (explore.getImage (), explore.getX (), explore.getY (), explore.getWidth (), explore.getHeight (), null);
             }
         }

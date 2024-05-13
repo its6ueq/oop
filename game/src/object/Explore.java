@@ -6,33 +6,18 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class Explore {
+    private static Image[] exploreImages = null;
+
+    static {
+        exploreImages = new Image[] {extractExploreImages (1108, 0), extractExploreImages (1108, 31), extractExploreImages (1108, 64), extractExploreImages (1108, 97), extractExploreImages (1108, 130),};
+    }
+
     int x;
     int y;
     int width;
     int height;
     int state;
     Image image;
-
-    private static Image[] exploreImages = null;
-
-    static {
-        exploreImages = new Image[] {
-                extractExploreImages(1108, 0),
-                extractExploreImages(1108, 31),
-                extractExploreImages(1108, 64),
-                extractExploreImages(1108, 97),
-                extractExploreImages(1108, 130),
-        };
-    }
-
-    private static Image extractExploreImages(int x, int y) {
-        Image textureImage = new ImageIcon (Objects.requireNonNull(Explore.class.getResource("/texture.png"))).getImage();
-        BufferedImage texture = new BufferedImage(textureImage.getWidth(null), textureImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = texture.createGraphics();
-        g2d.drawImage(textureImage, 0, 0, null);
-        g2d.dispose();
-        return texture.getSubimage(x, y, 32, 32);
-    }
 
     public Explore (int x, int y) {
         this.x = x;
@@ -43,31 +28,40 @@ public class Explore {
         this.height = 64;
     }
 
-    public int nextState(){
+    private static Image extractExploreImages (int x, int y) {
+        Image textureImage = new ImageIcon (Objects.requireNonNull (Explore.class.getResource ("/texture/texture.png"))).getImage ();
+        BufferedImage texture = new BufferedImage (textureImage.getWidth (null), textureImage.getHeight (null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = texture.createGraphics ();
+        g2d.drawImage (textureImage, 0, 0, null);
+        g2d.dispose ();
+        return texture.getSubimage (x, y, 32, 32);
+    }
+
+    public int nextState () {
         state++;
-        if(state < 5){
+        if (state < 5) {
             this.image = exploreImages[state];
         }
         return state;
     }
 
-    public Image getImage(){
+    public Image getImage () {
         return image;
     }
 
-    public int getX(){
+    public int getX () {
         return x;
     }
 
-    public int getY(){
+    public int getY () {
         return y;
     }
 
-    public int getHeight(){
+    public int getHeight () {
         return height;
     }
 
-    public int getWidth(){
+    public int getWidth () {
         return width;
     }
 

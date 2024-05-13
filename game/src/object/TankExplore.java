@@ -7,39 +7,22 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class TankExplore {
+    private static BufferedImage[] exploreImages = null;
+
+    static {
+        try {
+            exploreImages = new BufferedImage[] {extractExploreImages (1040, 0), extractExploreImages (1040, 65), extractExploreImages (1040, 130), extractExploreImages (1040, 195), extractExploreImages (1040, 260), extractExploreImages (1040, 325), extractExploreImages (1040, 390),};
+        } catch (IOException e) {
+            throw new RuntimeException (e);
+        }
+    }
+
     int x;
     int y;
     int width;
     int height;
     int state;
     BufferedImage image;
-
-    private static BufferedImage[] exploreImages = null;
-
-    static {
-        try {
-            exploreImages = new BufferedImage[] {
-                    extractExploreImages(1040, 0),
-                    extractExploreImages(1040, 65),
-                    extractExploreImages(1040, 130),
-                    extractExploreImages(1040, 195),
-                    extractExploreImages(1040, 260),
-                    extractExploreImages(1040, 325),
-                    extractExploreImages(1040, 390),
-            };
-        } catch (IOException e) {
-            throw new RuntimeException (e);
-        }
-    }
-
-    private static BufferedImage extractExploreImages(int x, int y) throws IOException {
-        Image textureImage = new ImageIcon (Objects.requireNonNull(StaticObject.class.getResource("/texture.png"))).getImage();
-        BufferedImage texture = new BufferedImage(textureImage.getWidth(null), textureImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = texture.createGraphics();
-        g2d.drawImage(textureImage, 0, 0, null);
-        g2d.dispose();
-        return texture.getSubimage(x, y, 64, 64);
-    }
 
     public TankExplore (int x, int y) {
         this.x = x;
@@ -50,31 +33,40 @@ public class TankExplore {
         this.height = 96;
     }
 
-    public int nextState(){
+    private static BufferedImage extractExploreImages (int x, int y) throws IOException {
+        Image textureImage = new ImageIcon (Objects.requireNonNull (StaticObject.class.getResource ("/texture/texture.png"))).getImage ();
+        BufferedImage texture = new BufferedImage (textureImage.getWidth (null), textureImage.getHeight (null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = texture.createGraphics ();
+        g2d.drawImage (textureImage, 0, 0, null);
+        g2d.dispose ();
+        return texture.getSubimage (x, y, 64, 64);
+    }
+
+    public int nextState () {
         state++;
-        if(state < 7){
+        if (state < 7) {
             this.image = exploreImages[state];
         }
         return state;
     }
 
-    public BufferedImage getImage(){
+    public BufferedImage getImage () {
         return image;
     }
 
-    public int getX(){
+    public int getX () {
         return x;
     }
 
-    public int getY(){
+    public int getY () {
         return y;
     }
 
-    public int getHeight(){
+    public int getHeight () {
         return height;
     }
 
-    public int getWidth(){
+    public int getWidth () {
         return width;
     }
 
