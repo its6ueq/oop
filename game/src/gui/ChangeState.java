@@ -72,14 +72,14 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
     }
 
     void drawVictory (Graphics g) throws IOException, FontFormatException {
-        endScene ("VICTORY");
+        endScene ("VICTORY", g);
     }
 
     void drawDefeat (Graphics g) throws IOException, FontFormatException {
-        endScene ("DEFEAT");
+        endScene ("DEFEAT", g);
     }
 
-    void endScene (String string) throws IOException, FontFormatException {
+    void endScene (String string, Graphics g) throws IOException, FontFormatException {
         setBackground (Color.BLACK);
         InputStream is1 = MainPanel.class.getResourceAsStream ("/Font/prstartk.ttf");
         assert is1 != null;
@@ -108,14 +108,15 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed (KeyEvent e) {
-        int key = e.getKeyCode ();
-        if (key != KeyEvent.VK_ESCAPE) {
-            System.out.println ("DONE");
-            if (time != null)
-                time.stop ();
-            Controller.startMenu ();
+        if (currState < 1 || currState > 35) {
+            int key = e.getKeyCode ();
+            if (key != KeyEvent.VK_ESCAPE) {
+                System.out.println ("DONE");
+                if (time != null)
+                    time.stop ();
+                Controller.startMenu ();
+            }
         }
-
     }
 
     @Override
