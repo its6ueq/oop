@@ -23,7 +23,7 @@ public class Bullet {
     int damage;
     int dir;
     Image image;
-    int speed = 15;
+    int speed = 10;
 
     public Bullet (int x, int y, int dir, int damage) {
         this.x = x;

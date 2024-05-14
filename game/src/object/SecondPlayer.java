@@ -22,6 +22,10 @@ public class SecondPlayer extends object.Tank {
             bullets.add (bullet);
 
     }
+    //public static int RIGHT = 1;
+    //public static int LEFT = 3;
+    //public static int DOWN = 2;
+    //public static int UP = 0;
 
     //1: up, 2: left, 3: down, 4: right
     public void changeMove(int key){
@@ -33,10 +37,10 @@ public class SecondPlayer extends object.Tank {
                 this.currMove = 3;
                 break;
             case KeyEvent.VK_LEFT:
-                this.currMove = 2;
+                this.currMove = 4;
                 break;
             case KeyEvent.VK_RIGHT:
-                this.currMove = 4;
+                this.currMove = 2;
                 break;
             case KeyEvent.VK_NUMPAD1:
                 this.shot ();
@@ -49,7 +53,7 @@ public class SecondPlayer extends object.Tank {
     public void stopMove(int key){
         if (key == KeyEvent.VK_UP && currMove == 1) currMove = 5;
         if (key == KeyEvent.VK_DOWN && currMove == 3) currMove = 5;
-        if (key == KeyEvent.VK_LEFT && currMove == 2) currMove = 5;
-        if (key == KeyEvent.VK_RIGHT && currMove == 4) currMove = 5;
+        if (key == KeyEvent.VK_LEFT && currMove == 4) currMove = 5;
+        if (key == KeyEvent.VK_RIGHT && currMove == 2) currMove = 5;
     }
 }

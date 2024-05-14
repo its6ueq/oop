@@ -19,9 +19,8 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
     public ChangeState () {
         setFocusable (true);
         addKeyListener (this);
-
-        if (currState >= 0 && currState < 35) {
-            currState++;
+        currState++;
+        if (currState > 0 && currState <= 35) {
             System.out.println("Changing to state: " + currState);
             repaint ();
             time = new Timer (1000, _ -> {
@@ -44,14 +43,14 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
     @Override
     public void paintComponent (Graphics g) {
         super.paintComponent (g);
-        if (currState == -1) {
+        if (currState == 0) {
             try {
                 drawDefeat (g);
             } catch (IOException | FontFormatException e) {
                 throw new RuntimeException (e);
             }
         }
-        if (currState != 35) {
+        else if (currState != 36) {
             try {
                 drawState (g);
             } catch (IOException | FontFormatException e) {

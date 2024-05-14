@@ -22,6 +22,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     public static FirstPlayer p1;
     public static SecondPlayer p2;
+    public static Ally ally;
     public static ArrayList<StaticObject> bricks;
     public static ArrayList<StaticObject> stones;
     public static ArrayList<StaticObject> waters;
@@ -34,9 +35,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     int TIMER_DELAY;
     Timer gameLoop;
     Timer nextState;
-    Timer botMove;
     Timer addBullet;
-    ArrayList<ArrayList<Character>> map;
+    public static ArrayList<ArrayList<Character>> map;
+    public static int[][] bestPath = new int[30][30];
+    static int[][] mapp = new int[30][30];
+    public static int[] cx = {0, 1, 0, -1};
+    public static int[] cy = {1, 0, -1, 0};
+
     ArrayList<Explore> explorings;
     ArrayList<TankExplore> tankexplorings;
 
@@ -60,6 +65,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             allyTanks++;
         }
 
+        ally = new Ally (386, 775, 10);
+
         bricks = new ArrayList<> ();
         stones = new ArrayList<> ();
         waters = new ArrayList<> ();
@@ -77,7 +84,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
         //exlore
-        nextState = new Timer (10, _ -> {
+        nextState = new Timer (35, _ -> {
             if (!explorings.isEmpty ()) {
                 explorings.removeIf (explore -> explore.nextState () == 5);
             }
@@ -86,15 +93,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         });
         nextState.start ();
-
-        botMove = new Timer (1000, _ -> {
-            if (botTanks != null) {
-                for (BotTank tank : botTanks) {
-                    tank.changeMove ();
-                }
-            }
-        });
-        botMove.start ();
 
         addBullet = new Timer (500, _ -> {
             if (p1 != null) {
@@ -118,7 +116,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     void defeat () {
         System.out.println("Defeat");
         currState = -1;
-        botMove.stop ();
         addBullet.stop ();
         gameLoop.stop ();
         Controller.changeState ();
@@ -126,7 +123,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     void victory () {
         System.out.println("State complete");
-        botMove.stop ();
         addBullet.stop ();
         gameLoop.stop ();
         Controller.changeState ();
@@ -150,10 +146,36 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             e.printStackTrace ();
         }
         System.out.println ("Map imported");
+
         return map;
     }
 
     void buildMap () {
+        //import map
+        for (int i = 0; i < 26; i++) {
+            for (int j = 0; j < 26; j++) {
+                bestPath[i][j] = 999999;
+                if (map.get (i).get (j) == '#') {
+                    mapp[i][j] = 500;
+                } else if (map.get (i).get (j) == '@' || map.get (i).get (j) == '~') {
+                    mapp[i][j] = 9999;
+                } else {
+                    mapp[i][j] = 1;
+                }
+            }
+            mapp[i][26] = 9999;
+            mapp[26][i] = 9999;
+        }
+
+        bestPath[24][13] = 0;
+        bestPath[24][12] = 0;
+        bestPath[25][13] = 0;
+        bestPath[25][12] = 0;
+
+        recur (24, 13);
+        recur (24, 12);
+        recur (25, 13);
+        recur (25, 12);
         for (int i = 0; i < 26; i++) {
             for (int j = 0; j < 26; j++) {
                 char currChar = map.get (j).get (i);
@@ -174,13 +196,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     bushes.add (bush);
                 }
                 if (currChar == 'X') {
-                    BotTank bot = new BotTank (i * 32, j * 32, 5, 1, 1);
+                    BotTank bot = new BotTank (i * 32 + 8, j * 32 + 8, 5, 1, 1);
                     botTanks.add (bot);
                     enemyTanks++;
                 }
             }
         }
         System.out.println ("Map built");
+    }
+
+    private static void recur (int currX, int currY) {
+        for (int i = 0; i < 4; i++) {
+            if (currX + cx[i] < 26 && currX + cx[i] >= 0 && currY + cy[i] < 26 && currY + cy[i] >= 0) {
+                if (bestPath[currX + cx[i]][currY + cy[i]] > bestPath[currX][currY] + mapp[currX + cx[i]][currY + cy[i]] + mapp[currX + cx[i] + 1][currY + cy[i]] + mapp[currX + cx[i]][currY + cy[i] + 1] + mapp[currX + cx[i] + 1][currY + cy[i] + 1]) {
+                    bestPath[currX + cx[i]][currY + cy[i]] = bestPath[currX][currY] + mapp[currX + cx[i]][currY + cy[i]] + mapp[currX + cx[i] + 1][currY + cy[i]] + mapp[currX + cx[i]][currY + cy[i] + 1] + mapp[currX + cx[i] + 1][currY + cy[i] + 1];
+                    recur (currX + cx[i], currY + cy[i]);
+                }
+            }
+        }
     }
 
     @Override
@@ -199,8 +232,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     void bottankmove () {
         if (botTanks != null) {
-            for (BotTank tank : botTanks)
-                tank.move ();
+            for (BotTank bot : botTanks)
+                bot.botMove ();
         }
     }
 
@@ -303,6 +336,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         bullet.getDamaged (dmg);
                     }
                 }
+
+                if(p1 != null){
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p1.getX (), p1.getY (), p1.getHeight (), p1.getWidth ())) {
+                        bullet.getDamaged (bullet.getDamage ());
+                    }
+                }
+
+                if(p2 != null){
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), p2.getX (), p2.getY (), p2.getHeight (), p2.getWidth ())) {
+                        bullet.getDamaged (bullet.getDamage ());
+                    }
+                }
+
+                if(ally != null){
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), ally.getX (), ally.getY (), ally.getHeight (), ally.getWidth ())) {
+                        bullet.getDamaged (bullet.getDamage ());
+                    }
+                }
             }
         }
         if (enermyBullets != null) {
@@ -339,6 +390,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         int dmg = Math.min (bullet.getDamage (), p2.getHeal ());
                         p2.getDamaged (dmg);
                         bullet.getDamaged (dmg);
+                    }
+                }
+
+                if (ally != null) {
+                    if (isHit (bullet.getX (), bullet.getY (), bullet.getHeight (), bullet.getWidth (), ally.getX (), ally.getY (), ally.getHeight (), ally.getWidth ())) {
+                        int dmg = Math.min (bullet.getDamage (), ally.getHeal ());
+                        ally.getDamaged (dmg);
+                        bullet.getDamaged (dmg);
+                        if(ally.getHeal () == 0) {
+                            defeat ();
+                        }
                     }
                 }
             }
@@ -453,9 +515,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 g.drawRect (bot.getX(), bot.getY() - 12, bot.getWidth (), 5);
             }
         }
+        if (ally != null) {
+            g.setColor (Color.BLACK);
+            g.fillRect (ally.getX(), ally.getY() - 8, ally.getWidth (), 5);
+            g.setColor (Color.BLUE);
+            double currHP = (double) ally.getWidth () * ally.getHeal () / ally.getMaxHeal ();
+            g.fillRect (ally.getX(), ally.getY() - 8, (int)currHP, 5);
+            g.setColor (Color.BLACK);
+            g.drawRect (ally.getX(), ally.getY() - 8, ally.getWidth (), 5);
+        }
     }
 
     void drawTank (Graphics g) {
+        if (ally != null) {
+            g.drawImage (ally.getImage (), ally.getX (), ally.getY (), ally.getWidth (), ally.getHeight (), null);
+        }
 
         if (p1 != null) {
             g.drawImage (p1.getImage (), p1.getX (), p1.getY (), p1.getWidth (), p1.getHeight (), null);

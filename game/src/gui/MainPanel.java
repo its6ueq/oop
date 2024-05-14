@@ -142,15 +142,17 @@ public class MainPanel extends JPanel implements ActionListener, KeyListener {
             repaint ();
         }
         if (key == KeyEvent.VK_ENTER) {
-            System.out.println (currPick);
             switch (currPick) {
                 case 0:
+                    System.out.println ("Playing alone:(");
                     is2P = false;
                     break;
                 case 1:
+                    System.out.println ("Playing with friend:)");
                     is2P = true;
                     break;
                 case 2:
+                    System.out.println ("Exiting the game but why :(?");
                     System.exit (0);
                     break;
             }

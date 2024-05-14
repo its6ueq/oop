@@ -77,8 +77,6 @@ public class StaticObject {
         return heal;
     }
 
-    ;
-
     public void getDamaged (int damage) {
         this.heal -= damage;
     }

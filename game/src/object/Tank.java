@@ -77,6 +77,9 @@ public abstract class Tank {
         return this.image;
     }
 
+    public void setImage () {
+        this.image = tankImages[tankType * 4 + dir];
+    }
     public int getWidth () {
         return this.width;
     }
@@ -93,7 +96,9 @@ public abstract class Tank {
         return this.heal;
     }
 
-    public int getMaxHeal () {return this.maxHeal;}
+    public int getMaxHeal () {
+        return this.maxHeal;
+    }
 
     public void move () {
         switch (currMove) {
@@ -101,21 +106,20 @@ public abstract class Tank {
                 this.moveUp ();
                 break;
             case 2:
-                this.moveLeft ();
+                this.moveRight ();
                 break;
             case 3:
                 this.moveDown ();
                 break;
             case 4:
-                this.moveRight ();
+                this.moveLeft ();
                 break;
             default:
                 break;
         }
     }
 
-    public void shot () {
-    }
+    public void shot () {}
 
     public Bullet addBullet () {
         if (dir == UP) {
@@ -166,7 +170,7 @@ public abstract class Tank {
 
     public boolean canGoUp () {
         this.dir = UP;
-        this.image = tankImages[tankType * 4 + dir];
+        this.setImage ();
         if (this.getY () == 0)
             return false;
 
@@ -202,6 +206,13 @@ public abstract class Tank {
             }
         }
 
+        if (ally != null) {
+            if (this.getY () - speed < ally.getY () + ally.getHeight () && this.getY () + speed > ally.getY () + ally.getHeight ()) {
+                if (this.getX () - ally.getWidth () < ally.getX () && ally.getX () < this.getX () + this.getWidth ())
+                    return false;
+            }
+        }
+
         return true;
     }
 
@@ -220,7 +231,7 @@ public abstract class Tank {
 
     public boolean canGoDown () {
         this.dir = DOWN;
-        this.image = tankImages[tankType * 4 + dir];
+        this.setImage ();
         if (this.getY () + this.getHeight () == screenHeight)
             return false;
 
@@ -256,6 +267,13 @@ public abstract class Tank {
             }
         }
 
+        if (ally != null) {
+            if (ally.getY () - speed < this.getY () + this.getHeight () && ally.getY () + speed > this.getY () + this.getHeight ()) {
+                if (this.getX () - ally.getWidth () < ally.getX () && ally.getX () < this.getX () + this.getWidth ())
+                    return false;
+            }
+        }
+
         return true;
     }
 
@@ -274,7 +292,7 @@ public abstract class Tank {
 
     public boolean canGoLeft () {
         this.dir = LEFT;
-        this.image = tankImages[tankType * 4 + dir];
+        this.setImage ();
 
         if (this.getX () == 0)
             return false;
@@ -312,6 +330,13 @@ public abstract class Tank {
             }
         }
 
+        if (ally != null) {
+            if (this.getX () - speed < ally.getX () + ally.getWidth () && this.getX () + speed > ally.getX () + ally.getWidth ()) {
+                if (this.getY () - ally.getHeight () < ally.getY () && ally.getY () < this.getY () + this.getHeight ())
+                    return false;
+            }
+        }
+
         return true;
     }
 
@@ -330,7 +355,7 @@ public abstract class Tank {
 
     public boolean canGoRight () {
         this.dir = RIGHT;
-        this.image = tankImages[tankType * 4 + dir];
+        this.setImage ();
 
         if (this.getX () + this.getWidth () == screenWidth)
             return false;
@@ -367,6 +392,14 @@ public abstract class Tank {
                     return false;
             }
         }
+
+        if (ally != null) {
+            if (ally.getX () - speed < this.getX () + this.getWidth () && ally.getX () + speed > this.getX () + this.getWidth ()) {
+                if (this.getY () - ally.getHeight () < ally.getY () && ally.getY () < this.getY () + this.getHeight ())
+                    return false;
+            }
+        }
+
         return true;
     }
 
