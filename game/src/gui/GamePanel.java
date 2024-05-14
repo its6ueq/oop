@@ -44,6 +44,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     int allyTanks;
 
     public GamePanel () {
+        System.out.println("Start state: " + currState);
         screenWidth = 832;
         screenHeight = 832;
         TIMER_DELAY = 1000 / 60;
@@ -115,6 +116,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     void defeat () {
+        System.out.println("Defeat");
         currState = -1;
         botMove.stop ();
         addBullet.stop ();
@@ -123,6 +125,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     void victory () {
+        System.out.println("State complete");
         botMove.stop ();
         addBullet.stop ();
         gameLoop.stop ();
@@ -146,6 +149,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         } catch (IOException e) {
             e.printStackTrace ();
         }
+        System.out.println ("Map imported");
         return map;
     }
 
@@ -176,6 +180,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
+        System.out.println ("Map built");
     }
 
     @Override
@@ -220,6 +225,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     Explore explore = new Explore (bullet.getX () - 32 + bullet.getWidth (), bullet.getY () - 32 + bullet.getHeight ());
                     iterator.remove ();
                     explorings.add (explore);
+
                 }
             }
         }
@@ -233,7 +239,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     iterator.remove ();
                     tankexplorings.add (explore);
                     enemyTanks--;
-                    System.out.println (enemyTanks);
+                    System.out.println ("Bot Tank destroyed");
                     if (enemyTanks <= 0)
                         victory ();
                 }
@@ -246,6 +252,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 tankexplorings.add (explore);
                 p1 = null;
                 allyTanks--;
+                System.out.println ("Player 1 destroyed");
                 if (allyTanks == 0)
                     defeat ();
             }
@@ -257,6 +264,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 tankexplorings.add (explore);
                 p2 = null;
                 allyTanks--;
+                System.out.println ("Player 2 destroyed");
                 if (allyTanks == 0)
                     defeat ();
             }
@@ -411,6 +419,40 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         drawTank (g);
         drawMap (g);
         drawExplore (g);
+        drawHP(g);
+    }
+
+    void drawHP(Graphics g){
+        if (p1 != null) {
+            g.setColor (Color.BLACK);
+            g.fillRect (p1.getX(), p1.getY() - 12, p1.getWidth (), 5);
+            g.setColor (Color.GREEN);
+            double currHP = (double) p1.getWidth () * p1.getHeal () / p1.getMaxHeal ();
+            g.fillRect (p1.getX(), p1.getY() - 12, (int)currHP, 5);
+
+            g.setColor (Color.WHITE);
+            g.drawRect (p1.getX(), p1.getY() - 12, p1.getWidth (), 5);
+        }
+        if (p2 != null) {
+            g.setColor (Color.BLACK);
+            g.fillRect (p2.getX(), p2.getY() - 12, p2.getWidth (), 5);
+            g.setColor (Color.GREEN);
+            double currHP = (double) p2.getWidth () * p2.getHeal () / p2.getMaxHeal ();
+            g.fillRect (p2.getX(), p2.getY() - 12, (int)currHP, 5);
+            g.setColor (Color.WHITE);
+            g.drawRect (p2.getX(), p2.getY() - 12, p2.getWidth (), 5);
+        }
+        if (botTanks != null) {
+            for (BotTank bot : botTanks) {
+                g.setColor (Color.BLACK);
+                g.fillRect (bot.getX(), bot.getY() - 12, bot.getWidth (), 5);
+                g.setColor (Color.RED);
+                double currHP = (double) bot.getWidth () * bot.getHeal () / bot.getMaxHeal ();
+                g.fillRect (bot.getX(), bot.getY() - 12, (int)currHP, 5);
+                g.setColor (Color.WHITE);
+                g.drawRect (bot.getX(), bot.getY() - 12, bot.getWidth (), 5);
+            }
+        }
     }
 
     void drawTank (Graphics g) {

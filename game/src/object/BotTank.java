@@ -5,8 +5,7 @@ import gui.GamePanel;
 import java.awt.*;
 import java.util.Random;
 
-import static gui.GamePanel.bullets;
-import static gui.GamePanel.enermyBullets;
+import static gui.GamePanel.*;
 
 public class BotTank extends object.Tank {
 

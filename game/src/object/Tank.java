@@ -35,6 +35,7 @@ public abstract class Tank {
     int width;
     int tankType = 0;
     int heal;
+    int maxHeal;
     int damage;
     int speed;
     int speedReload;
@@ -45,7 +46,8 @@ public abstract class Tank {
     public Tank (int tankX, int tankY, int heal, int damage, int speed) {
         this.x = tankX;
         this.y = tankY;
-        this.heal = heal;
+        this.maxHeal = heal;
+        this.heal = this.maxHeal;
         this.damage = damage;
         this.speed = speed;
         this.height = 48;
@@ -90,6 +92,8 @@ public abstract class Tank {
     public int getHeal () {
         return this.heal;
     }
+
+    public int getMaxHeal () {return this.maxHeal;}
 
     public void move () {
         switch (currMove) {

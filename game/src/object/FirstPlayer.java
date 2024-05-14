@@ -9,6 +9,7 @@ public class FirstPlayer extends object.Tank {
 
     public FirstPlayer (int tankX, int tankY, int heal, int damage, int speed) {
         super (tankX, tankY, heal, damage, speed);
+
         tankType = 0;
         this.image = tankImages[tankType * 4 + dir];
     }

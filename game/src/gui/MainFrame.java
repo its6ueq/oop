@@ -6,9 +6,8 @@ public class MainFrame extends JFrame {
     public static int currState = 0;
 
     public MainFrame () {
-
         super ("TANK BATTLE");
-
+        System.out.println("Create JFrame");
         setJMenuBar (createMenu ());
 
         int screenWidth = 832;
