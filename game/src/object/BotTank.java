@@ -89,7 +89,7 @@ public class BotTank extends object.Tank {
                     maxNextMove = bestPath[x32 + cx[i]][y32 + cy[i]];
                     this.onGoingX = (y32 + cy[i]) * 32 + 8;
                     this.onGoingY = (x32 + cx[i]) * 32 + 8;
-                    this.dir = i + 1;
+                    this.dir = (i + 1) % 4;
                     this.setImage ();
                 }
             }

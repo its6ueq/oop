@@ -16,9 +16,21 @@ public abstract class Tank {
     public static Image[] tankImages = null;
 
     static {
-        tankImages = new Image[] {extractTankImage (0, 7 * 32), extractTankImage (32, 7 * 32), extractTankImage (64, 7 * 32), extractTankImage (96, 7 * 32),
+        tankImages = new Image[] {
+                extractTankImage (0, 7 * 32),
+                extractTankImage (32, 7 * 32),
+                extractTankImage (64, 7 * 32),
+                extractTankImage (96, 7 * 32),
 
-                extractTankImage (256, 7 * 32), extractTankImage (288, 7 * 32), extractTankImage (320, 7 * 32), extractTankImage (352, 7 * 32), extractTankImage (128, 7 * 32), extractTankImage (160, 7 * 32), extractTankImage (192, 7 * 32), extractTankImage (224, 7 * 32),
+                extractTankImage (256, 7 * 32),
+                extractTankImage (288, 7 * 32),
+                extractTankImage (320, 7 * 32),
+                extractTankImage (352, 7 * 32),
+
+                extractTankImage (128, 7 * 32),
+                extractTankImage (160, 7 * 32),
+                extractTankImage (192, 7 * 32),
+                extractTankImage (224, 7 * 32),
 
         };
     }

@@ -97,7 +97,7 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
         g.drawString (string, getXforCenteredText (string, g), 832 / 2);
 
         st = gamefont.deriveFont (20f);
-        String conti = "Press any key to continue";
+        String conti = "Press ENTER to continue";
         g.setFont (st);
         g.setColor (Color.WHITE);
         g.drawString (conti, getXforCenteredText (conti, g), 832 / 10 * 6);
@@ -117,8 +117,8 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
     public void keyPressed (KeyEvent e) {
         if (currState < 1 || currState > 35) {
             int key = e.getKeyCode ();
-            if (key != KeyEvent.VK_ESCAPE) {
-                System.out.println ("DONE");
+            if (key == KeyEvent.VK_ENTER) {
+                System.out.println ("Finished game");
                 if (time != null)
                     time.stop ();
                 Controller.startMenu ();
