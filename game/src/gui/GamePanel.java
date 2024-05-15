@@ -167,9 +167,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             mapp[26][i] = 9999;
         }
 
-        bestPath[24][13] = 0;
+        bestPath[24][13] = 500;
         bestPath[24][12] = 0;
-        bestPath[25][13] = 0;
+        bestPath[25][13] = 500;
         bestPath[25][12] = 0;
 
         recur (24, 13);
@@ -208,7 +208,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private static void recur (int currX, int currY) {
         for (int i = 0; i < 4; i++) {
             if (currX + cx[i] < 26 && currX + cx[i] >= 0 && currY + cy[i] < 26 && currY + cy[i] >= 0) {
-                if (bestPath[currX + cx[i]][currY + cy[i]] > bestPath[currX][currY] + mapp[currX + cx[i]][currY + cy[i]] + mapp[currX + cx[i] + 1][currY + cy[i]] + mapp[currX + cx[i]][currY + cy[i] + 1] + mapp[currX + cx[i] + 1][currY + cy[i] + 1]) {
+                if(bestPath[currX + cx[i]][currY + cy[i]] > bestPath[currX][currY] + mapp[currX + cx[i]][currY + cy[i]] + mapp[currX + cx[i] + 1][currY + cy[i]] + mapp[currX + cx[i]][currY + cy[i] + 1] + mapp[currX + cx[i] + 1][currY + cy[i] + 1]){
                     bestPath[currX + cx[i]][currY + cy[i]] = bestPath[currX][currY] + mapp[currX + cx[i]][currY + cy[i]] + mapp[currX + cx[i] + 1][currY + cy[i]] + mapp[currX + cx[i]][currY + cy[i] + 1] + mapp[currX + cx[i] + 1][currY + cy[i] + 1];
                     recur (currX + cx[i], currY + cy[i]);
                 }
