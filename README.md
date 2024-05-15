@@ -2,7 +2,7 @@
 
 Implementation of Tank Game.
 
-##Overview
+## Overview
 
 Game was written in Java Swing \n
 Enemy tanks are going to destroy the ally base. The player's mission is to protect the base \n
