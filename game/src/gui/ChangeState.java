@@ -128,6 +128,5 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased (KeyEvent e) {
-
     }
 }
