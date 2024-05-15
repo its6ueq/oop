@@ -1,8 +1,8 @@
 # TanksGame
 
-Implementation of Tank Game.
-Game was written in Java Swing.
-Enemy tanks are going to destroy the ally base. The player's mission is to protect the base.
+Implementation of Tank Game. \n
+Game was written in Java Swing. \n
+Enemy tanks are going to destroy the ally base. The player's mission is to protect the base. \n
 
 ![Start menu](game/src/img/start.jpg)
 ![Stage one](game/src/img/stage_2.jpg)
@@ -33,9 +33,9 @@ Enemy tanks have 3HP, 1 damage and 1 speed. \n
 
 ## Levels
 
-Levels are plain text files in that are located in **levels** directory.
-Each level is a two dimensional array with 26 rows and 26 columns.
-Each field in the array should be one of following elements:
+Levels are plain text files in that are located in **levels** directory. \n
+Each level is a two dimensional array with 26 rows and 26 columns. \n
+Each field in the array should be one of following elements: \n
 
 ## Objects
 
