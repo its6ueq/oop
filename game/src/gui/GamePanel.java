@@ -196,7 +196,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     bushes.add (bush);
                 }
                 if (currChar == 'X') {
-                    BotTank bot = new BotTank (i * 32 + 8, j * 32 + 8, 5, 1, 1);
+                    BotTank bot = new BotTank (i * 32 + 8, j * 32 + 8, 3, 1, 1);
                     botTanks.add (bot);
                     enemyTanks++;
                 }
@@ -469,7 +469,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         setBackground (Color.BLACK);
         g.setFont (new Font ("Arial", Font.PLAIN, 32));
         g.setColor (Color.WHITE);
-        g.drawString ("Nhìn source code bẩn mắt vãi cứt !!", 10, 35);
+//        g.drawString ("Nhìn source code bẩn mắt vãi cứt !!", 10, 35);
 
 
         if (waters != null) {
