@@ -1,8 +1,8 @@
 # TanksGame
 
-Implementation of Tank Game. \n
-Game was written in Java Swing. \n
-Enemy tanks are going to destroy the ally base. The player's mission is to protect the base. \n
+Implementation of Tank Game \n
+Game was written in Java Swing \n
+Enemy tanks are going to destroy the ally base. The player's mission is to protect the base \n
 
 ![Start menu](game/src/img/start.jpg)
 ![Stage one](game/src/img/stage_2.jpg)
