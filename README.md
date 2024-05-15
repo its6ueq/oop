@@ -1,11 +1,8 @@
 # TanksGame
 
-Implementation of Tank Game.
-
-## Overview
-
-Game was written in Java Swing \n
-Enemy tanks are going to destroy the ally base. The player's mission is to protect the base \n
+Implementation of Tank Game.  
+A Java Swing project of Object Oriented Programming, CN12-UET.  
+Enemy tanks are going to destroy the ally base. The player's mission is to protect the base.   
 
 ## Controls:
 
@@ -27,15 +24,15 @@ Enemy tanks are going to destroy the ally base. The player's mission is to prote
 
 ## Tanks
 
-Each tanks have 3 bullets at the same time, auto reload after 0.3 seconds. \n
-Ally tanks have 10HP, 1 damage and 2 speed. \n
-Enemy tanks have 3HP, 1 damage and 1 speed. \n
+Each tanks have 3 bullets at the same time, auto reload after 0.3 seconds.  
+Ally tanks have 10HP, 1 damage and 2 speed.  
+Enemy tanks have 3HP, 1 damage and 1 speed.  
 
 ## Levels
 
-Levels are plain text files in that are located in **levels** directory. \n
-Each level is a two dimensional array with 26 rows and 26 columns. \n
-Each field in the array should be one of following elements: \n
+Levels are plain text files in that are located in **levels** directory.  
+Each level is a two dimensional array with 26 rows and 26 columns.  
+Each field in the array should be one of following elements:  
 
 ## Objects
 
