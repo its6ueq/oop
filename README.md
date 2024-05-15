@@ -1,11 +1,11 @@
 # TanksGame
 
-Implementation of Tank Game \n
+Implementation of Tank Game.
+
+##Overview
+
 Game was written in Java Swing \n
 Enemy tanks are going to destroy the ally base. The player's mission is to protect the base \n
-
-![Start menu](game/src/img/start.jpg)
-![Stage one](game/src/img/stage_2.jpg)
 
 ## Controls:
 
@@ -46,3 +46,6 @@ Each field in the array should be one of following elements: \n
 - **~** ![Water](game/src/img/water.png) Water: cant be destroyed, cant be passed through but bullets can shot thought it
 
 If bullet hits target, brick or stage border, both of them will damage each other's lives, when the durability of one of them returns to 0, they will be destroyed.
+
+![Start menu](game/src/img/start.jpg)
+![Stage one](game/src/img/stage_2.jpg)
