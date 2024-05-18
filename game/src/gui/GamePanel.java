@@ -48,7 +48,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     int enemyTanks;
     int allyTanks;
 
+    Sound sound;
     public GamePanel () {
+        sound = new Sound ();
         System.out.println("Start state: " + currState);
         screenWidth = 832;
         screenHeight = 832;
@@ -243,6 +245,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             while (iterator.hasNext ()) {
                 Bullet bullet = iterator.next ();
                 if (bullet.getDamage () <= 0) {
+                    sound.playSE (2);
                     Explore explore = new Explore (bullet.getX () - 32 + bullet.getWidth (), bullet.getY () - 32 + bullet.getHeight ());
                     iterator.remove ();
                     explorings.add (explore);
@@ -255,6 +258,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             while (iterator.hasNext ()) {
                 Bullet bullet = iterator.next ();
                 if (bullet.getDamage () <= 0) {
+                    sound.playSE (2);
                     Explore explore = new Explore (bullet.getX () - 32 + bullet.getWidth (), bullet.getY () - 32 + bullet.getHeight ());
                     iterator.remove ();
                     explorings.add (explore);
@@ -268,6 +272,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             while (iterator.hasNext ()) {
                 BotTank bot = iterator.next ();
                 if (bot.getHeal () <= 0) {
+                    sound.playSE (4);
                     TankExplore explore = new TankExplore (bot.getX () - 24, bot.getY () - 24);
                     iterator.remove ();
                     tankexplorings.add (explore);
@@ -281,6 +286,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         if (p1 != null) {
             if (p1.getHeal () <= 0) {
+                sound.playSE (5);
                 TankExplore explore = new TankExplore (p1.getX () - 24, p1.getY () - 24);
                 tankexplorings.add (explore);
                 p1 = null;
@@ -293,6 +299,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         if (p2 != null) {
             if (p2.getHeal () <= 0) {
+                sound.playSE (5);
                 TankExplore explore = new TankExplore (p2.getX () - 24, p2.getY () - 24);
                 tankexplorings.add (explore);
                 p2 = null;

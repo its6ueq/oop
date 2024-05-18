@@ -14,7 +14,7 @@ public abstract class Tank {
     public static int DOWN = 2;
     public static int UP = 0;
     public static Image[] tankImages = null;
-
+    Sound sound;
     static {
         tankImages = new Image[] {
                 extractTankImage (0, 7 * 32),
@@ -56,6 +56,7 @@ public abstract class Tank {
     Image image;
 
     public Tank (int tankX, int tankY, int heal, int damage, int speed) {
+        sound = new Sound();
         this.x = tankX;
         this.y = tankY;
         this.maxHeal = heal;
@@ -134,6 +135,7 @@ public abstract class Tank {
     public void shot () {}
 
     public Bullet addBullet () {
+        sound.playSE(3);
         if (dir == UP) {
             return new Bullet (x + 19, y - 9, UP, damage);
         } else if (dir == DOWN) {

@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import object.Sound;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +16,10 @@ import static gui.MainFrame.currState;
 
 public class ChangeState extends JPanel implements ActionListener, KeyListener {
     Timer time;
-
+    Sound sound;
     public ChangeState () {
+        sound = new Sound ();
+        sound.playMusic (0);
         setFocusable (true);
         addKeyListener (this);
         currState++;
@@ -68,7 +71,7 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
 
     void drawState (Graphics g) throws IOException, FontFormatException {
         setBackground (Color.BLACK);
-        InputStream is1 = MainPanel.class.getResourceAsStream ("/Font/prstartk.ttf");
+        InputStream is1 = MainPanel.class.getResourceAsStream ("/font/prstartk.ttf");
         assert is1 != null;
         Font gamefont = Font.createFont (Font.TRUETYPE_FONT, is1);
         Font st = gamefont.deriveFont (60f);
@@ -88,7 +91,7 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
 
     void endScene (String string, Graphics g) throws IOException, FontFormatException {
         setBackground (Color.BLACK);
-        InputStream is1 = MainPanel.class.getResourceAsStream ("/Font/prstartk.ttf");
+        InputStream is1 = MainPanel.class.getResourceAsStream ("/font/prstartk.ttf");
         assert is1 != null;
         Font gamefont = Font.createFont (Font.TRUETYPE_FONT, is1);
         Font st = gamefont.deriveFont (90f);

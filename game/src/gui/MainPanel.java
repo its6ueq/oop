@@ -1,8 +1,10 @@
 package gui;
 
 import controller.Controller;
+import object.Sound;
 import object.Tank;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,8 +12,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static gui.GamePanel.is2P;
@@ -22,8 +27,11 @@ public class MainPanel extends JPanel implements ActionListener, KeyListener {
     public final int TIMER_DELAY;
     int currPick;
     Timer gameLoop;
+    Sound sound;
 
     public MainPanel () {
+        sound = new Sound ();
+        sound.playMusic (0);
         TIMER_DELAY = 60;
         currPick = 0;
 
@@ -39,8 +47,6 @@ public class MainPanel extends JPanel implements ActionListener, KeyListener {
         groupLayout.setAutoCreateGaps (true);
         groupLayout.setAutoCreateContainerGaps (true);
         add (contentPanel);
-
-
     }
 
     protected static Image extractTankImage (int x, int y) {
@@ -69,7 +75,7 @@ public class MainPanel extends JPanel implements ActionListener, KeyListener {
 
     void drawText (Graphics g) throws IOException, FontFormatException {
 
-        InputStream is = MainPanel.class.getResourceAsStream ("/Font/tank_font.ttf");
+        InputStream is = MainPanel.class.getResourceAsStream ("/font/tank_font.ttf");
         assert is != null;
         Font tankfont = Font.createFont (Font.TRUETYPE_FONT, is);
         Font sizedFont = tankfont.deriveFont (96f);
@@ -78,7 +84,7 @@ public class MainPanel extends JPanel implements ActionListener, KeyListener {
         g.setColor (Color.RED);
         g.drawString (gameName, getXforCenteredText (gameName, g), 832 / 3);
 
-        InputStream is1 = MainPanel.class.getResourceAsStream ("/Font/prstartk.ttf");
+        InputStream is1 = MainPanel.class.getResourceAsStream ("/font/prstartk.ttf");
         assert is1 != null;
         Font gamefont = Font.createFont (Font.TRUETYPE_FONT, is1);
         Font sized1Font = gamefont.deriveFont (30f);
@@ -130,18 +136,21 @@ public class MainPanel extends JPanel implements ActionListener, KeyListener {
     public void keyPressed (KeyEvent e) {
         int key = e.getKeyCode ();
         if (key == KeyEvent.VK_W || key == KeyEvent.VK_UP) {
+            sound.playSE (2);
             currPick--;
             if (currPick < 0)
                 currPick = 2;
             repaint ();
         }
         if (key == KeyEvent.VK_S || key == KeyEvent.VK_DOWN) {
+            sound.playSE (2);
             currPick++;
             if (currPick > 2)
                 currPick = 0;
             repaint ();
         }
         if (key == KeyEvent.VK_ENTER) {
+            sound.stopMusic (0);
             switch (currPick) {
                 case 0:
                     System.out.println ("Playing alone:(");
