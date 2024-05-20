@@ -198,7 +198,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     bushes.add (bush);
                 }
                 if (currChar == 'X') {
-                    BotTank bot = new BotTank (i * 32 + 8, j * 32 + 8, 3, 1, 1);
+                    BotTank bot;
+                    if(is2P) {
+                        bot = new BotTank (i * 32 + 8, j * 32 + 8, 7, 1, 1);
+                    } else {
+                        bot = new BotTank (i * 32 + 8, j * 32 + 8, 3, 1, 1);
+                    }
                     botTanks.add (bot);
                     enemyTanks++;
                 }

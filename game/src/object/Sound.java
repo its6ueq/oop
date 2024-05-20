@@ -16,7 +16,7 @@ public class Sound {
             "resource/audio/AllyTankDestroyed.wav"
     };
 
-    Clip[] clip = new Clip[5];
+    Clip[] clip = new Clip[6];
 
     public Sound(){
         for(int i = 0; i <= 5; i++) {

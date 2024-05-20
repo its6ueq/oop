@@ -19,7 +19,6 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
     Sound sound;
     public ChangeState () {
         sound = new Sound ();
-        sound.playMusic (0);
         setFocusable (true);
         addKeyListener (this);
         currState++;
@@ -48,6 +47,7 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
         super.paintComponent (g);
         if (currState == 0) {
             try {
+                sound.playMusic (1);
                 drawDefeat (g);
             } catch (IOException | FontFormatException e) {
                 throw new RuntimeException (e);
@@ -55,12 +55,14 @@ public class ChangeState extends JPanel implements ActionListener, KeyListener {
         }
         else if (currState != 36) {
             try {
+                sound.playMusic (0);
                 drawState (g);
             } catch (IOException | FontFormatException e) {
                 throw new RuntimeException (e);
             }
         } else {
             try {
+                sound.playMusic (0);
                 drawVictory (g);
             } catch (IOException | FontFormatException e) {
                 throw new RuntimeException (e);
