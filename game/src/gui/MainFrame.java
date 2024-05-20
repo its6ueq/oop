@@ -3,11 +3,11 @@ package gui;
 import javax.swing.*;
 
 public class MainFrame extends JFrame {
-    public static int currState = 3;
+    public static int currState = 0;
 
     public MainFrame () {
         super ("TANK BATTLE");
-        System.out.println("Create JFrame");
+        System.out.println("Created JFrame");
         setJMenuBar (createMenu ());
 
         int screenWidth = 832;
