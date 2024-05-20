@@ -9,6 +9,10 @@ import static gui.GamePanel.cx;
 import static gui.GamePanel.cy;
 import static gui.GamePanel.enermyBullets;
 
+import static gui.GamePanel.p1;
+import static gui.GamePanel.p2;
+
+
 public class BotTank extends object.Tank {
 
 
@@ -45,26 +49,72 @@ public class BotTank extends object.Tank {
 
     @Override
     public void move () {
-        switch (currMove) {
-            case 1:
-                if(this.canGoUp ()) this.moveUp ();
-                else this.shot ();
-                break;
-            case 2:
-                if(this.canGoRight ()) this.moveRight ();
-                else this.shot ();
-                break;
-            case 3:
-                if(this.canGoDown ()) this.moveDown ();
-                else this.shot ();
-                break;
-            case 4:
-                if(this.canGoLeft ()) this.moveLeft ();
-                else this.shot ();
-                break;
-            default:
-                break;
+        if(checkCanHitPlayer()){
+            this.shot ();
+        } else {
+            switch (currMove) {
+                case 1:
+                    if(this.canGoUp ()) this.moveUp ();
+                    else this.shot ();
+                    break;
+                case 2:
+                    if(this.canGoRight ()) this.moveRight ();
+                    else this.shot ();
+                    break;
+                case 3:
+                    if(this.canGoDown ()) this.moveDown ();
+                    else this.shot ();
+                    break;
+                case 4:
+                    if(this.canGoLeft ()) this.moveLeft ();
+                    else this.shot ();
+                    break;
+                default:
+                    break;
+            }
         }
+    }
+
+    //o1x < o2x && o1x + o1w > o2x && o1y < o2y && o1y + o1h > o2y
+
+    boolean checkCanHitPlayer(){
+        if(p1 != null){
+            if(p1.getX() + p1.getWidth () / 2 > this.x && p1.getX() < this.x + width / 2 ){
+                if(p1.getY () > this.y && dir == DOWN){
+                    return true;
+                }
+                if(p1.getY () < this.y && dir == UP){
+                    return true;
+                }
+            }
+            if(p1.getY () + p1.getHeight () / 2 > this.y && p1.getY () < this.y + height / 2){
+                if(p1.getX() > this.x && dir == RIGHT){
+                    return true;
+                }
+                if(p1.getX() < this.x && dir == LEFT){
+                    return true;
+                }
+            }
+        }
+        if(p2 != null){
+            if(p2.getX() + p2.getWidth () / 2 > this.x && p2.getX() < this.x + width / 2 ){
+                if(p2.getY () < this.y && dir == DOWN){
+                    return true;
+                }
+                if(p2.getY () > this.y && dir == UP){
+                    return true;
+                }
+            }
+            if(p2.getY () + p2.getHeight () / 2 > this.y && p2.getY () < this.y + height / 2){
+                if(p2.getX() > this.x && dir == RIGHT){
+                    return true;
+                }
+                if(p2.getX() < this.x && dir == LEFT){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 //    public static int RIGHT = 1;

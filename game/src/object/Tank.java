@@ -69,6 +69,10 @@ public abstract class Tank {
         this.currBullet = this.maxBullet;
     }
 
+    public void reset(){
+        sound = null;
+    }
+
     protected static Image extractTankImage (int x, int y) {
         Image textureImage = new ImageIcon (Objects.requireNonNull (Tank.class.getResource ("/texture/texture.png"))).getImage ();
         BufferedImage texture = new BufferedImage (textureImage.getWidth (null), textureImage.getHeight (null), BufferedImage.TYPE_INT_ARGB);
@@ -428,5 +432,4 @@ public abstract class Tank {
         }
         return false;
     }
-
 }

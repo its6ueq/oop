@@ -29,6 +29,11 @@ public class Sound {
         }
     }
 
+    public void stopAll(){
+        for(int i = 0; i <= 5; i++)
+            stop(i);
+    }
+
     public void play(int i){
         clip[i].setFramePosition(0);
         clip[i].start();
@@ -36,7 +41,6 @@ public class Sound {
 
     public void loop(int i){
         clip[i].loop(Clip.LOOP_CONTINUOUSLY);
-
     }
 
     public void stop(int i){

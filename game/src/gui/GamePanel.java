@@ -84,7 +84,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         setFocusable (true);
         addKeyListener (this);
 
-
         //exlore
         nextState = new Timer (35, _ -> {
             if (!explorings.isEmpty ()) {
@@ -115,18 +114,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         gameLoop.start ();
     }
 
-    void defeat () {
-        System.out.println("Defeat");
-        currState = -1;
+    void resetAll() {
         addBullet.stop ();
         gameLoop.stop ();
+        nextState.stop ();
+        sound.stopAll ();
+        if (botTanks != null) {
+            for (BotTank bot : botTanks)
+                bot.reset ();
+        }
+        if (p1 != null) {
+            p1.reset ();
+        }
+        if (p2 != null) {
+            p2.reset ();
+        }
+    }
+
+    void defeat () {
+        System.out.println("Defeat");
+        resetAll ();
+        currState = -1;
         Controller.changeState ();
     }
 
     void victory () {
         System.out.println("State complete");
-        addBullet.stop ();
-        gameLoop.stop ();
+        resetAll ();
         Controller.changeState ();
     }
 
@@ -200,9 +214,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 if (currChar == 'X') {
                     BotTank bot;
                     if(is2P) {
-                        bot = new BotTank (i * 32 + 8, j * 32 + 8, 7, 1, 1);
+                        bot = new BotTank (i * 32 + 8, j * 32 + 8, 5, 1, 1);
                     } else {
-                        bot = new BotTank (i * 32 + 8, j * 32 + 8, 3, 1, 1);
+                        bot = new BotTank (i * 32 + 8, j * 32 + 8, 2, 1, 1);
                     }
                     botTanks.add (bot);
                     enemyTanks++;

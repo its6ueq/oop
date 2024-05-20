@@ -3,7 +3,7 @@ package gui;
 import javax.swing.*;
 
 public class MainFrame extends JFrame {
-    public static int currState = 0;
+    public static int currState = 3;
 
     public MainFrame () {
         super ("TANK BATTLE");
